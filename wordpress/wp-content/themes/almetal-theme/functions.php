@@ -868,6 +868,7 @@ add_action('wp_update_nav_menu_item', 'almetal_update_menu_item_icon', 10, 3);
 require_once get_template_directory() . '/inc/custom-post-types.php';
 require_once get_template_directory() . '/inc/facebook-importer.php';
 require_once get_template_directory() . '/inc/contact-handler.php';
+require_once get_template_directory() . '/inc/slideshow-admin.php';
 // require_once get_template_directory() . '/inc/customizer.php';
 
 /**

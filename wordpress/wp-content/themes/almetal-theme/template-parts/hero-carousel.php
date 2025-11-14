@@ -2,47 +2,56 @@
 /**
  * Template part pour le carrousel hero
  * Version adaptative : Desktop (JS custom) / Mobile (Swiper.js)
+ * Données dynamiques depuis l'interface d'administration
  */
 
 $is_mobile = almetal_is_mobile();
+
+// Récupérer les slides depuis la base de données
+$slides = Almetal_Slideshow_Admin::get_slides();
+
+// Filtrer les slides actifs uniquement
+$active_slides = array_filter($slides, function($slide) {
+    return isset($slide['active']) && $slide['active'] === true;
+});
+
+// Trier par ordre
+usort($active_slides, function($a, $b) {
+    return ($a['order'] ?? 0) - ($b['order'] ?? 0);
+});
+
+// Si aucun slide actif, ne rien afficher
+if (empty($active_slides)) {
+    return;
+}
 ?>
 
 <?php if ($is_mobile) : ?>
-    <!-- Hero Carousel MOBILE (Swiper) -->
+    <!-- Hero Carousel MOBILE (Swiper) - Contenu dynamique -->
     <div class="mobile-hero-swiper swiper">
         <div class="swiper-wrapper">
-            <!-- Slide 1 -->
-            <div class="swiper-slide mobile-hero-slide">
-                <div class="mobile-hero-image" style="background-image: url('<?php echo get_template_directory_uri(); ?>/assets/images/hero/hero-1.png');"></div>
-                <div class="mobile-hero-overlay"></div>
-                <div class="mobile-hero-content">
-                    <h1 class="mobile-hero-title">Bienvenue chez AL Métallerie</h1>
-                    <p class="mobile-hero-subtitle">Expert en métallerie à Clermont-Ferrand</p>
-                    <a href="#contact" class="mobile-hero-cta">Demander un devis</a>
+            <?php foreach ($active_slides as $index => $slide) : ?>
+                <!-- Slide <?php echo ($index + 1); ?> -->
+                <div class="swiper-slide mobile-hero-slide">
+                    <div class="mobile-hero-image" style="background-image: url('<?php echo esc_url($slide['image']); ?>');"></div>
+                    <div class="mobile-hero-overlay"></div>
+                    <div class="mobile-hero-content">
+                        <?php if (!empty($slide['title'])) : ?>
+                            <h1 class="mobile-hero-title"><?php echo esc_html($slide['title']); ?></h1>
+                        <?php endif; ?>
+                        
+                        <?php if (!empty($slide['subtitle'])) : ?>
+                            <p class="mobile-hero-subtitle"><?php echo esc_html($slide['subtitle']); ?></p>
+                        <?php endif; ?>
+                        
+                        <?php if (!empty($slide['cta_text']) && !empty($slide['cta_url'])) : ?>
+                            <a href="<?php echo esc_url($slide['cta_url']); ?>" class="mobile-hero-cta">
+                                <?php echo esc_html($slide['cta_text']); ?>
+                            </a>
+                        <?php endif; ?>
+                    </div>
                 </div>
-            </div>
-
-            <!-- Slide 2 -->
-            <div class="swiper-slide mobile-hero-slide">
-                <div class="mobile-hero-image" style="background-image: url('<?php echo get_template_directory_uri(); ?>/assets/images/hero/hero-2.png');"></div>
-                <div class="mobile-hero-overlay"></div>
-                <div class="mobile-hero-content">
-                    <h1 class="mobile-hero-title">Créations sur mesure</h1>
-                    <p class="mobile-hero-subtitle">Portails, garde-corps, escaliers</p>
-                    <a href="#actualites" class="mobile-hero-cta">Découvrir nos réalisations</a>
-                </div>
-            </div>
-            
-            <!-- Slide 3 -->
-            <div class="swiper-slide mobile-hero-slide">
-                <div class="mobile-hero-image" style="background-image: url('<?php echo get_template_directory_uri(); ?>/assets/images/hero/hero-3.png');"></div>
-                <div class="mobile-hero-overlay"></div>
-                <div class="mobile-hero-content">
-                    <h1 class="mobile-hero-title">Formations</h1>
-                    <p class="mobile-hero-subtitle">Particulier, centre de formation, à la demande</p>
-                    <a href="#formations" class="mobile-hero-cta">Découvrir nos formations</a>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
         
         <!-- Pagination -->
@@ -50,35 +59,29 @@ $is_mobile = almetal_is_mobile();
     </div>
 
 <?php else : ?>
-    <!-- Hero Carousel DESKTOP (JS custom) -->
+    <!-- Hero Carousel DESKTOP (JS custom) - Contenu dynamique -->
     <section id="hero" class="hero-carousel">
         <div class="hero-slides">
-            <!-- Slide 1 -->
-            <div class="hero-slide" style="background-image: url('<?php echo get_template_directory_uri(); ?>/assets/images/hero/hero-1.png');">
-                <div class="hero-content">
-                    <h1 class="hero-title">Bienvenue chez AL Métallerie</h1>
-                    <p class="hero-subtitle">Expert en métallerie à Clermont-Ferrand</p>
-                    <a href="#contact" class="hero-cta">Demander un devis</a>
+            <?php foreach ($active_slides as $index => $slide) : ?>
+                <!-- Slide <?php echo ($index + 1); ?> -->
+                <div class="hero-slide" style="background-image: url('<?php echo esc_url($slide['image']); ?>');">
+                    <div class="hero-content">
+                        <?php if (!empty($slide['title'])) : ?>
+                            <h1 class="hero-title"><?php echo esc_html($slide['title']); ?></h1>
+                        <?php endif; ?>
+                        
+                        <?php if (!empty($slide['subtitle'])) : ?>
+                            <p class="hero-subtitle"><?php echo esc_html($slide['subtitle']); ?></p>
+                        <?php endif; ?>
+                        
+                        <?php if (!empty($slide['cta_text']) && !empty($slide['cta_url'])) : ?>
+                            <a href="<?php echo esc_url($slide['cta_url']); ?>" class="hero-cta">
+                                <?php echo esc_html($slide['cta_text']); ?>
+                            </a>
+                        <?php endif; ?>
+                    </div>
                 </div>
-            </div>
-
-            <!-- Slide 2 -->
-            <div class="hero-slide" style="background-image: url('<?php echo get_template_directory_uri(); ?>/assets/images/hero/hero-2.png');">
-                <div class="hero-content">
-                    <h1 class="hero-title">Créations sur mesure</h1>
-                    <p class="hero-subtitle">Portails, garde-corps, escaliers</p>
-                    <a href="#services" class="hero-cta">Découvrir nos réalisations</a>
-                </div>
-            </div>
-            
-            <!-- Slide 3 -->
-            <div class="hero-slide" style="background-image: url('<?php echo get_template_directory_uri(); ?>/assets/images/hero/hero-3.png');">
-                <div class="hero-content">
-                    <h1 class="hero-title">Formations</h1>
-                    <p class="hero-subtitle">Particulier, centre de formation, à la demande</p>
-                    <a href="#services" class="hero-cta">Découvrir nos formations</a>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
         
         <!-- Contrôles du carrousel -->
