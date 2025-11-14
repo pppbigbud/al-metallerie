@@ -421,6 +421,34 @@ function almetal_enqueue_scripts() {
         wp_get_theme()->get('Version'),
         true // Chargé dans le footer
     );
+    
+    // ============================================
+    // PAGE 404
+    // ============================================
+    
+    // CSS de la page 404 (chargé uniquement sur la page 404)
+    if (is_404()) {
+        wp_enqueue_style(
+            'almetal-error-404',
+            get_template_directory_uri() . '/assets/css/error-404.css',
+            array('almetal-style'),
+            wp_get_theme()->get('Version')
+        );
+    }
+    
+    // ============================================
+    // PAGE EN CONSTRUCTION
+    // ============================================
+    
+    // CSS de la page En Construction (chargé uniquement sur les pages utilisant ce template)
+    if (is_page_template('page-en-construction.php')) {
+        wp_enqueue_style(
+            'almetal-under-construction',
+            get_template_directory_uri() . '/assets/css/under-construction.css',
+            array('almetal-style'),
+            wp_get_theme()->get('Version')
+        );
+    }
 }
 add_action('wp_enqueue_scripts', 'almetal_enqueue_scripts');
 

@@ -58,7 +58,7 @@
             <p class="mobile-footer-credits">
                 <?php esc_html_e('Fait avec', 'almetal'); ?> 
                 <span class="mobile-footer-heart">❤️</span> 
-                <?php esc_html_e('à Clermont-Ferrand', 'almetal'); ?>
+                <?php esc_html_e('à Palladuc', 'almetal'); ?>
             </p>
         </div>
 

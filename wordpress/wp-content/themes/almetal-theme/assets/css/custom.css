@@ -2531,7 +2531,25 @@ input[type="button"]:hover {
 /* Carte service - Utilise .realisation-card pour l'harmonisation */
 /* Les styles de base sont hérités de .realisation-card */
 
-/* Image de la carte */
+/* Image de la carte - Alignée sur le style des réalisations (DESKTOP uniquement) */
+.services-grid .realisation-image-wrapper {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4/3; /* Ratio 4/3 comme les cards de réalisations */
+}
+
+.services-grid .realisation-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.services-grid .realisation-card:hover .realisation-image {
+    transform: scale(1.1);
+}
+
+/* Anciens styles .service-image conservés pour compatibilité */
 .service-image {
     position: relative;
     width: 100%;
