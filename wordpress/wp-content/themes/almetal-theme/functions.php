@@ -400,6 +400,27 @@ function almetal_enqueue_scripts() {
     wp_localize_script('almetal-contact', 'almetal_theme', array(
         'template_url' => get_template_directory_uri(),
     ));
+    
+    // ============================================
+    // BANNIÈRE DE CONSENTEMENT AUX COOKIES
+    // ============================================
+    
+    // CSS de la bannière de cookies (chargé sur toutes les pages)
+    wp_enqueue_style(
+        'almetal-cookie-banner',
+        get_template_directory_uri() . '/assets/css/cookie-banner.css',
+        array('almetal-style'),
+        wp_get_theme()->get('Version')
+    );
+    
+    // JavaScript de la bannière de cookies (chargé sur toutes les pages)
+    wp_enqueue_script(
+        'almetal-cookie-consent',
+        get_template_directory_uri() . '/assets/js/cookie-consent.js',
+        array(),
+        wp_get_theme()->get('Version'),
+        true // Chargé dans le footer
+    );
 }
 add_action('wp_enqueue_scripts', 'almetal_enqueue_scripts');
 

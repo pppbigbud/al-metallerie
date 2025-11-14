@@ -302,6 +302,13 @@
 
 </div><!-- #page -->
 
+<?php 
+/**
+ * Bannière de consentement aux cookies
+ * Injectée via JavaScript pour une meilleure performance
+ */
+?>
+
 <?php wp_footer(); ?>
 
 </body>
