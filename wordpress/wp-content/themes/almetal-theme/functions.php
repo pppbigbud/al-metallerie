@@ -907,3 +907,528 @@ require_once get_template_directory() . '/inc/seo-text-generator.php';
 require_once get_template_directory() . '/inc/image-optimizer.php';
 require_once get_template_directory() . '/inc/social-settings-page.php';
 require_once get_template_directory() . '/inc/image-webp-optimizer.php';
+
+/**
+ * ============================================================================
+ * OPTIMISATIONS SEO AUTOMATIQUES POUR LES RÉALISATIONS
+ * ============================================================================
+ * Génération automatique de :
+ * - Meta tags SEO (title, description, Open Graph, Twitter, géolocalisation)
+ * - Schemas JSON-LD (Article, LocalBusiness, BreadcrumbList)
+ * - Structure H1/H2/H3 optimisée
+ * - Attributs ALT pour les images de galerie
+ * - Enrichissement de contenu court
+ * - Fil d'Ariane avec microdonnées
+ * - Liens internes contextuels
+ * ============================================================================
+ */
+
+/**
+ * 1. GÉNÉRATION AUTOMATIQUE DES META TAGS SEO
+ * Injecte les meta tags dans le <head> pour les pages single realisation
+ */
+function almetal_seo_meta_tags() {
+    // Uniquement sur les pages single realisation
+    if (!is_singular('realisation')) {
+        return;
+    }
+    
+    global $post;
+    
+    // Récupération des données
+    $title = get_the_title();
+    $lieu = get_post_meta($post->ID, '_almetal_lieu', true) ?: 'Puy-de-Dôme';
+    $client = get_post_meta($post->ID, '_almetal_client', true);
+    $duree = get_post_meta($post->ID, '_almetal_duree', true);
+    $terms = get_the_terms($post->ID, 'type_realisation');
+    $type_realisation = (!empty($terms) && !is_wp_error($terms)) ? $terms[0]->name : 'Métallerie';
+    
+    // Construction de la description SEO optimisée
+    $description = "Découvrez notre réalisation de {$type_realisation} à {$lieu}";
+    if ($client) {
+        $description .= " pour {$client}";
+    }
+    if ($duree) {
+        $description .= ". Projet réalisé en {$duree}";
+    }
+    $description .= ". AL Métallerie, votre expert en métallerie dans le Puy-de-Dôme.";
+    
+    // Image à la une pour Open Graph
+    $image_url = get_the_post_thumbnail_url($post->ID, 'large') ?: get_template_directory_uri() . '/assets/images/default-og.jpg';
+    
+    // URL canonique
+    $canonical_url = get_permalink();
+    
+    // Coordonnées GPS de Peschadoires (siège social)
+    $latitude = '45.8344';
+    $longitude = '3.1636';
+    
+    ?>
+    <!-- SEO Meta Tags - Générés automatiquement -->
+    <meta name="description" content="<?php echo esc_attr($description); ?>">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" href="<?php echo esc_url($canonical_url); ?>">
+    
+    <!-- Open Graph -->
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="<?php echo esc_attr($title . ' - ' . $type_realisation . ' à ' . $lieu); ?>">
+    <meta property="og:description" content="<?php echo esc_attr($description); ?>">
+    <meta property="og:url" content="<?php echo esc_url($canonical_url); ?>">
+    <meta property="og:site_name" content="AL Métallerie">
+    <meta property="og:image" content="<?php echo esc_url($image_url); ?>">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?php echo esc_attr($title . ' - ' . $type_realisation); ?>">
+    <meta name="twitter:description" content="<?php echo esc_attr($description); ?>">
+    <meta name="twitter:image" content="<?php echo esc_url($image_url); ?>">
+    
+    <!-- Géolocalisation -->
+    <meta name="geo.region" content="FR-63">
+    <meta name="geo.placename" content="Peschadoires">
+    <meta name="geo.position" content="<?php echo $latitude; ?>;<?php echo $longitude; ?>">
+    <meta name="ICBM" content="<?php echo $latitude; ?>, <?php echo $longitude; ?>">
+    <?php
+}
+add_action('wp_head', 'almetal_seo_meta_tags', 1);
+
+/**
+ * 2. GÉNÉRATION AUTOMATIQUE DES SCHEMAS JSON-LD
+ * Injecte les microdonnées structurées pour Google
+ */
+function almetal_seo_json_ld_schemas() {
+    // Uniquement sur les pages single realisation
+    if (!is_singular('realisation')) {
+        return;
+    }
+    
+    global $post;
+    
+    // Récupération des données
+    $title = get_the_title();
+    $lieu = get_post_meta($post->ID, '_almetal_lieu', true) ?: 'Puy-de-Dôme';
+    $client = get_post_meta($post->ID, '_almetal_client', true);
+    $date_realisation = get_post_meta($post->ID, '_almetal_date_realisation', true) ?: get_the_date('Y-m-d');
+    $terms = get_the_terms($post->ID, 'type_realisation');
+    $type_realisation = (!empty($terms) && !is_wp_error($terms)) ? $terms[0]->name : 'Métallerie';
+    
+    // Images de la galerie
+    $gallery_ids = get_post_meta($post->ID, '_almetal_gallery_images', true);
+    $images = [];
+    if (!empty($gallery_ids)) {
+        $gallery_ids = explode(',', $gallery_ids);
+        foreach ($gallery_ids as $img_id) {
+            $img_url = wp_get_attachment_image_url(trim($img_id), 'large');
+            if ($img_url) {
+                $images[] = $img_url;
+            }
+        }
+    }
+    // Fallback sur l'image à la une
+    if (empty($images)) {
+        $featured_img = get_the_post_thumbnail_url($post->ID, 'large');
+        if ($featured_img) {
+            $images[] = $featured_img;
+        }
+    }
+    
+    $content = wp_strip_all_tags(get_the_content());
+    $excerpt = wp_trim_words($content, 30, '...');
+    
+    // Schema 1 : Article
+    $schema_article = [
+        '@context' => 'https://schema.org',
+        '@type' => 'Article',
+        'headline' => $title,
+        'description' => $excerpt,
+        'image' => $images,
+        'datePublished' => get_the_date('c'),
+        'dateModified' => get_the_modified_date('c'),
+        'author' => [
+            '@type' => 'Organization',
+            'name' => 'AL Métallerie',
+            'url' => home_url()
+        ],
+        'publisher' => [
+            '@type' => 'Organization',
+            'name' => 'AL Métallerie',
+            'logo' => [
+                '@type' => 'ImageObject',
+                'url' => get_template_directory_uri() . '/assets/images/logo.png'
+            ]
+        ],
+        'mainEntityOfPage' => [
+            '@type' => 'WebPage',
+            '@id' => get_permalink()
+        ]
+    ];
+    
+    // Schema 2 : LocalBusiness
+    $schema_business = [
+        '@context' => 'https://schema.org',
+        '@type' => 'LocalBusiness',
+        'name' => 'AL Métallerie',
+        'image' => get_template_directory_uri() . '/assets/images/logo.png',
+        'address' => [
+            '@type' => 'PostalAddress',
+            'streetAddress' => 'Peschadoires',
+            'addressLocality' => 'Peschadoires',
+            'postalCode' => '63920',
+            'addressRegion' => 'Auvergne-Rhône-Alpes',
+            'addressCountry' => 'FR'
+        ],
+        'geo' => [
+            '@type' => 'GeoCoordinates',
+            'latitude' => '45.8344',
+            'longitude' => '3.1636'
+        ],
+        'url' => home_url(),
+        'telephone' => '+33-4-XX-XX-XX-XX',
+        'priceRange' => '$$',
+        'areaServed' => [
+            '@type' => 'GeoCircle',
+            'geoMidpoint' => [
+                '@type' => 'GeoCoordinates',
+                'latitude' => '45.8344',
+                'longitude' => '3.1636'
+            ],
+            'geoRadius' => '50000'
+        ],
+        'hasOfferCatalog' => [
+            '@type' => 'OfferCatalog',
+            'name' => 'Services de métallerie',
+            'itemListElement' => [
+                [
+                    '@type' => 'Offer',
+                    'itemOffered' => [
+                        '@type' => 'Service',
+                        'name' => $type_realisation
+                    ]
+                ]
+            ]
+        ]
+    ];
+    
+    // Schema 3 : BreadcrumbList
+    $schema_breadcrumb = [
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+            [
+                '@type' => 'ListItem',
+                'position' => 1,
+                'name' => 'Accueil',
+                'item' => home_url()
+            ],
+            [
+                '@type' => 'ListItem',
+                'position' => 2,
+                'name' => 'Réalisations',
+                'item' => get_post_type_archive_link('realisation')
+            ]
+        ]
+    ];
+    
+    // Ajouter la catégorie si elle existe
+    if (!empty($terms) && !is_wp_error($terms)) {
+        $schema_breadcrumb['itemListElement'][] = [
+            '@type' => 'ListItem',
+            'position' => 3,
+            'name' => $terms[0]->name,
+            'item' => get_term_link($terms[0])
+        ];
+        $schema_breadcrumb['itemListElement'][] = [
+            '@type' => 'ListItem',
+            'position' => 4,
+            'name' => $title,
+            'item' => get_permalink()
+        ];
+    } else {
+        $schema_breadcrumb['itemListElement'][] = [
+            '@type' => 'ListItem',
+            'position' => 3,
+            'name' => $title,
+            'item' => get_permalink()
+        ];
+    }
+    
+    // Injection des schemas
+    ?>
+    <!-- Schema.org JSON-LD - Générés automatiquement -->
+    <script type="application/ld+json">
+    <?php echo wp_json_encode($schema_article, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT); ?>
+    </script>
+    <script type="application/ld+json">
+    <?php echo wp_json_encode($schema_business, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT); ?>
+    </script>
+    <script type="application/ld+json">
+    <?php echo wp_json_encode($schema_breadcrumb, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT); ?>
+    </script>
+    <?php
+}
+add_action('wp_head', 'almetal_seo_json_ld_schemas', 2);
+
+/**
+ * 3. OPTIMISATION AUTOMATIQUE DE LA STRUCTURE H1/H2/H3
+ * Filtre le contenu pour ajouter des titres sémantiques si absents
+ */
+function almetal_seo_optimize_heading_structure($content) {
+    // Uniquement sur les pages single realisation
+    if (!is_singular('realisation')) {
+        return $content;
+    }
+    
+    global $post;
+    
+    // Vérifier si le contenu contient déjà des H2
+    if (preg_match('/<h[2-3]/i', $content)) {
+        return $content; // Structure déjà présente
+    }
+    
+    // Récupération des données
+    $lieu = get_post_meta($post->ID, '_almetal_lieu', true) ?: 'Puy-de-Dôme';
+    $terms = get_the_terms($post->ID, 'type_realisation');
+    $type_realisation = (!empty($terms) && !is_wp_error($terms)) ? $terms[0]->name : 'Métallerie';
+    
+    // Ajouter une structure H2/H3 optimisée au début du contenu
+    $seo_structure = '<h2>Présentation du projet de ' . esc_html($type_realisation) . ' à ' . esc_html($lieu) . '</h2>';
+    $seo_structure .= '<p>' . $content . '</p>';
+    $seo_structure .= '<h3>Notre expertise en ' . esc_html($type_realisation) . '</h3>';
+    $seo_structure .= '<p>AL Métallerie met son savoir-faire au service de vos projets de ' . strtolower(esc_html($type_realisation)) . ' dans le Puy-de-Dôme et ses environs.</p>';
+    
+    return $seo_structure;
+}
+add_filter('the_content', 'almetal_seo_optimize_heading_structure', 10);
+
+/**
+ * 4. GÉNÉRATION AUTOMATIQUE DES ATTRIBUTS ALT POUR LES IMAGES
+ * Ajoute des ALT optimisés et variés aux images de galerie
+ */
+function almetal_seo_generate_image_alt($attr, $attachment, $size) {
+    // Uniquement sur les pages single realisation
+    if (!is_singular('realisation')) {
+        return $attr;
+    }
+    
+    // Si l'ALT existe déjà, on le garde
+    if (!empty($attr['alt'])) {
+        return $attr;
+    }
+    
+    global $post;
+    
+    // Récupération des données
+    $title = get_the_title();
+    $lieu = get_post_meta($post->ID, '_almetal_lieu', true) ?: 'Puy-de-Dôme';
+    $terms = get_the_terms($post->ID, 'type_realisation');
+    $type_realisation = (!empty($terms) && !is_wp_error($terms)) ? $terms[0]->name : 'Métallerie';
+    
+    // Variations d'ALT pour éviter la répétition
+    $alt_variations = [
+        $type_realisation . ' réalisé par AL Métallerie à ' . $lieu,
+        'Projet de ' . strtolower($type_realisation) . ' à ' . $lieu . ' - AL Métallerie',
+        'Réalisation ' . strtolower($type_realisation) . ' ' . $lieu . ' par AL Métallerie',
+        'Détail du projet de ' . strtolower($type_realisation) . ' à ' . $lieu,
+        $title . ' - ' . $type_realisation . ' ' . $lieu
+    ];
+    
+    // Sélection aléatoire mais cohérente (basée sur l'ID de l'image)
+    $index = $attachment->ID % count($alt_variations);
+    $attr['alt'] = $alt_variations[$index];
+    
+    return $attr;
+}
+add_filter('wp_get_attachment_image_attributes', 'almetal_seo_generate_image_alt', 10, 3);
+
+/**
+ * 5. ENRICHISSEMENT AUTOMATIQUE DES CONTENUS COURTS
+ * Ajoute du contenu SEO si le texte est trop court (< 200 mots)
+ */
+function almetal_seo_enrich_short_content($content) {
+    // Uniquement sur les pages single realisation
+    if (!is_singular('realisation')) {
+        return $content;
+    }
+    
+    global $post;
+    
+    // Compter les mots du contenu
+    $word_count = str_word_count(wp_strip_all_tags($content));
+    
+    // Si le contenu est déjà suffisant, ne rien faire
+    if ($word_count >= 200) {
+        return $content;
+    }
+    
+    // Récupération des données
+    $lieu = get_post_meta($post->ID, '_almetal_lieu', true) ?: 'Puy-de-Dôme';
+    $client = get_post_meta($post->ID, '_almetal_client', true);
+    $duree = get_post_meta($post->ID, '_almetal_duree', true);
+    $terms = get_the_terms($post->ID, 'type_realisation');
+    $type_realisation = (!empty($terms) && !is_wp_error($terms)) ? $terms[0]->name : 'Métallerie';
+    
+    // Contenu d'enrichissement SEO
+    $enrichment = '<div class="seo-enrichment">';
+    $enrichment .= '<h3>À propos de ce projet</h3>';
+    $enrichment .= '<p>Ce projet de ' . strtolower(esc_html($type_realisation)) . ' a été réalisé à ' . esc_html($lieu) . ' par AL Métallerie, spécialiste de la métallerie dans le Puy-de-Dôme.</p>';
+    
+    if ($client) {
+        $enrichment .= '<p>Réalisé pour ' . esc_html($client) . ', ce projet illustre notre expertise et notre engagement envers la qualité.</p>';
+    }
+    
+    if ($duree) {
+        $enrichment .= '<p>La durée de réalisation de ce projet a été de ' . esc_html($duree) . ', témoignant de notre efficacité et de notre professionnalisme.</p>';
+    }
+    
+    $enrichment .= '<h3>Pourquoi choisir AL Métallerie ?</h3>';
+    $enrichment .= '<ul>';
+    $enrichment .= '<li><strong>Expertise locale</strong> : Basés à Peschadoires, nous intervenons dans tout le Puy-de-Dôme</li>';
+    $enrichment .= '<li><strong>Savoir-faire artisanal</strong> : Plus de 20 ans d\'expérience en métallerie</li>';
+    $enrichment .= '<li><strong>Qualité garantie</strong> : Matériaux premium et finitions soignées</li>';
+    $enrichment .= '<li><strong>Sur-mesure</strong> : Chaque projet est unique et adapté à vos besoins</li>';
+    $enrichment .= '</ul>';
+    
+    $enrichment .= '<p>Vous avez un projet de ' . strtolower(esc_html($type_realisation)) . ' à ' . esc_html($lieu) . ' ou dans les environs ? <a href="' . esc_url(home_url('/contact')) . '">Contactez-nous</a> pour un devis gratuit.</p>';
+    $enrichment .= '</div>';
+    
+    return $content . $enrichment;
+}
+add_filter('the_content', 'almetal_seo_enrich_short_content', 20);
+
+/**
+ * 6. FIL D'ARIANE AUTOMATIQUE AVEC SCHEMA
+ * Affiche un breadcrumb HTML avec microdonnées
+ */
+function almetal_seo_breadcrumb() {
+    // Uniquement sur les pages single realisation
+    if (!is_singular('realisation')) {
+        return;
+    }
+    
+    global $post;
+    
+    $terms = get_the_terms($post->ID, 'type_realisation');
+    
+    echo '<nav class="breadcrumb" aria-label="Fil d\'Ariane" itemscope itemtype="https://schema.org/BreadcrumbList">';
+    
+    // Accueil
+    echo '<span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">';
+    echo '<a itemprop="item" href="' . esc_url(home_url()) . '"><span itemprop="name">Accueil</span></a>';
+    echo '<meta itemprop="position" content="1" />';
+    echo '</span>';
+    echo ' &raquo; ';
+    
+    // Réalisations
+    echo '<span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">';
+    echo '<a itemprop="item" href="' . esc_url(get_post_type_archive_link('realisation')) . '"><span itemprop="name">Réalisations</span></a>';
+    echo '<meta itemprop="position" content="2" />';
+    echo '</span>';
+    
+    // Catégorie (si existe)
+    if (!empty($terms) && !is_wp_error($terms)) {
+        echo ' &raquo; ';
+        echo '<span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">';
+        echo '<a itemprop="item" href="' . esc_url(get_term_link($terms[0])) . '"><span itemprop="name">' . esc_html($terms[0]->name) . '</span></a>';
+        echo '<meta itemprop="position" content="3" />';
+        echo '</span>';
+        $position = 4;
+    } else {
+        $position = 3;
+    }
+    
+    // Page actuelle
+    echo ' &raquo; ';
+    echo '<span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">';
+    echo '<span itemprop="name">' . esc_html(get_the_title()) . '</span>';
+    echo '<meta itemprop="position" content="' . $position . '" />';
+    echo '</span>';
+    
+    echo '</nav>';
+}
+
+/**
+ * 7. INSERTION AUTOMATIQUE DE LIENS INTERNES CONTEXTUELS
+ * Ajoute des liens vers d'autres réalisations similaires
+ */
+function almetal_seo_add_internal_links($content) {
+    // Uniquement sur les pages single realisation
+    if (!is_singular('realisation')) {
+        return $content;
+    }
+    
+    global $post;
+    
+    // Récupérer les termes de la réalisation actuelle
+    $terms = get_the_terms($post->ID, 'type_realisation');
+    
+    if (empty($terms) || is_wp_error($terms)) {
+        return $content;
+    }
+    
+    // Récupérer 3 réalisations similaires (même type)
+    $related_args = [
+        'post_type' => 'realisation',
+        'posts_per_page' => 3,
+        'post__not_in' => [$post->ID],
+        'tax_query' => [
+            [
+                'taxonomy' => 'type_realisation',
+                'field' => 'term_id',
+                'terms' => $terms[0]->term_id
+            ]
+        ],
+        'orderby' => 'rand'
+    ];
+    
+    $related_query = new WP_Query($related_args);
+    
+    if (!$related_query->have_posts()) {
+        return $content;
+    }
+    
+    // Construction du bloc de liens internes
+    $internal_links = '<div class="internal-links-seo">';
+    $internal_links .= '<h3>Découvrez nos autres réalisations de ' . esc_html($terms[0]->name) . '</h3>';
+    $internal_links .= '<ul>';
+    
+    while ($related_query->have_posts()) {
+        $related_query->the_post();
+        $related_lieu = get_post_meta(get_the_ID(), '_almetal_lieu', true);
+        $internal_links .= '<li>';
+        $internal_links .= '<a href="' . esc_url(get_permalink()) . '">';
+        $internal_links .= esc_html(get_the_title());
+        if ($related_lieu) {
+            $internal_links .= ' - ' . esc_html($related_lieu);
+        }
+        $internal_links .= '</a>';
+        $internal_links .= '</li>';
+    }
+    
+    $internal_links .= '</ul>';
+    $internal_links .= '<p><a href="' . esc_url(get_term_link($terms[0])) . '" class="btn-see-more">Voir toutes nos réalisations de ' . esc_html($terms[0]->name) . '</a></p>';
+    $internal_links .= '</div>';
+    
+    wp_reset_postdata();
+    
+    return $content . $internal_links;
+}
+add_filter('the_content', 'almetal_seo_add_internal_links', 30);
+
+/**
+ * 8. ENREGISTREMENT DU CSS POUR LES OPTIMISATIONS SEO
+ * Charge les styles pour le breadcrumb, enrichissement et liens internes
+ */
+function almetal_seo_enqueue_styles() {
+    if (is_singular('realisation')) {
+        wp_enqueue_style(
+            'almetal-seo-enhancements',
+            get_template_directory_uri() . '/assets/css/seo-enhancements.css',
+            array(),
+            '1.0.0'
+        );
+    }
+}
+add_action('wp_enqueue_scripts', 'almetal_seo_enqueue_styles');

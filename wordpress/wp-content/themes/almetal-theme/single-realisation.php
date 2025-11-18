@@ -28,68 +28,13 @@ if (almetal_is_mobile()) {
     return;
 }
 
-// Préparer les données SEO
-$post_id = get_the_ID();
-$title = get_the_title();
-$excerpt = has_excerpt() ? get_the_excerpt() : wp_trim_words(get_the_content(), 30);
-$image_url = get_the_post_thumbnail_url($post_id, 'full');
-$permalink = get_permalink();
-$types = get_the_terms($post_id, 'type_realisation');
-$type_names = array();
-if ($types && !is_wp_error($types)) {
-    foreach ($types as $type) {
-        $type_names[] = $type->name;
-    }
-}
-
-// Ajouter les meta tags SEO
-add_action('wp_head', function() use ($title, $excerpt, $image_url, $permalink, $type_names) {
-    ?>
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="<?php echo esc_attr($excerpt); ?>">
-    <meta name="keywords" content="<?php echo esc_attr(implode(', ', $type_names)); ?>, métallerie, AL Métallerie, Clermont-Ferrand">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="article">
-    <meta property="og:title" content="<?php echo esc_attr($title); ?>">
-    <meta property="og:description" content="<?php echo esc_attr($excerpt); ?>">
-    <meta property="og:url" content="<?php echo esc_url($permalink); ?>">
-    <?php if ($image_url) : ?>
-    <meta property="og:image" content="<?php echo esc_url($image_url); ?>">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <?php endif; ?>
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="<?php echo esc_attr($title); ?>">
-    <meta name="twitter:description" content="<?php echo esc_attr($excerpt); ?>">
-    <?php if ($image_url) : ?>
-    <meta name="twitter:image" content="<?php echo esc_url($image_url); ?>">
-    <?php endif; ?>
-    
-    <!-- Schema.org JSON-LD -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "CreativeWork",
-        "name": "<?php echo esc_js($title); ?>",
-        "description": "<?php echo esc_js($excerpt); ?>",
-        "url": "<?php echo esc_url($permalink); ?>",
-        <?php if ($image_url) : ?>
-        "image": "<?php echo esc_url($image_url); ?>",
-        <?php endif; ?>
-        "author": {
-            "@type": "Organization",
-            "name": "AL Métallerie"
-        }
-    }
-    </script>
-    <?php
-});
 ?>
 
 <div class="single-realisation">
+    <?php
+    // Afficher le fil d'Ariane SEO
+    almetal_seo_breadcrumb();
+    ?>
     <?php
     while (have_posts()) :
         the_post();
