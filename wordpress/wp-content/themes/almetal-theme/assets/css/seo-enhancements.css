@@ -176,106 +176,45 @@
 }
 
 /* ============================================
-   SÉPARATEUR
+   SECTION "POURQUOI CHOISIR" DANS LA SIDEBAR
    ============================================ */
-.seo-separator {
-    margin: 3rem 0;
-    border: none;
-    border-top: 2px solid #e0e0e0;
-    max-width: 200px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-/* ============================================
-   SECTION "POURQUOI CHOISIR AL MÉTALLERIE"
-   ============================================ */
-.seo-why-choose {
+.realisation-why-choose {
     margin-top: 2rem;
-    padding: 2.5rem;
-    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-    border-radius: 8px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
-.seo-why-choose h3 {
-    color: #333;
-    font-size: 1.75rem;
+.realisation-why-choose h3 {
     margin-bottom: 1.5rem;
-    font-weight: 600;
-    text-align: center;
-    position: relative;
-    padding-bottom: 1rem;
 }
 
-.seo-why-choose h3::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 3px;
-    background: #F08B18;
-    border-radius: 2px;
-}
-
-.seo-why-choose ul {
+.realisation-why-choose .why-choose-list {
     list-style: none;
     padding: 0;
-    margin: 2rem 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
+    margin: 0 0 1.5rem 0;
 }
 
-.seo-why-choose ul li {
-    padding: 1.25rem;
-    background: #fff;
-    border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-    color: #555;
-    line-height: 1.6;
-    transition: all 0.3s ease;
+.realisation-why-choose .why-choose-list li {
+    padding: 1rem 0;
+    border-bottom: 1px solid #e0e0e0;
 }
 
-.seo-why-choose ul li:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 12px rgba(240, 139, 24, 0.15);
+.realisation-why-choose .why-choose-list li:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
 }
 
-.seo-why-choose ul li strong {
+.realisation-why-choose .why-choose-list li strong {
+    display: block;
     color: #F08B18;
     font-weight: 600;
-    display: block;
     margin-bottom: 0.5rem;
-    font-size: 1.1rem;
+    font-size: 0.95rem;
 }
 
-.seo-why-choose .cta-contact {
-    text-align: center;
-    margin-top: 2rem;
-    font-size: 1.1rem;
-    color: #555;
-}
-
-.seo-why-choose .btn-contact {
-    display: inline-block;
-    margin-top: 1rem;
-    padding: 1rem 2rem;
-    background: #F08B18;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 6px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(240, 139, 24, 0.3);
-}
-
-.seo-why-choose .btn-contact:hover {
-    background: #d67610;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(240, 139, 24, 0.4);
+.realisation-why-choose .why-choose-list li span {
+    display: block;
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
 }
 
 /* ============================================
@@ -304,35 +243,5 @@
     
     .internal-links-seo ul li {
         padding: 0.75rem;
-    }
-    
-    .seo-separator {
-        margin: 2rem 0;
-    }
-    
-    .seo-why-choose {
-        padding: 1.5rem;
-    }
-    
-    .seo-why-choose h3 {
-        font-size: 1.4rem;
-    }
-    
-    .seo-why-choose ul {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    
-    .seo-why-choose ul li {
-        padding: 1rem;
-    }
-    
-    .seo-why-choose .cta-contact {
-        font-size: 1rem;
-    }
-    
-    .seo-why-choose .btn-contact {
-        padding: 0.875rem 1.5rem;
-        font-size: 0.95rem;
     }
 }

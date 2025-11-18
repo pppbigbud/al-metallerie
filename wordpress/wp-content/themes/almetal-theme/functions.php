@@ -1410,37 +1410,13 @@ add_filter('the_content', 'almetal_seo_add_internal_links', 30);
 
 /**
  * 8. SECTION "POURQUOI CHOISIR AL MÉTALLERIE"
- * Affichée APRÈS les liens internes avec un séparateur
+ * DÉSACTIVÉE - Maintenant affichée dans la sidebar (single-realisation.php)
  */
-function almetal_seo_why_choose_us($content) {
-    // Uniquement sur les pages single realisation
-    if (!is_singular('realisation')) {
-        return $content;
-    }
-    
-    global $post;
-    
-    // Récupération des données
-    $lieu = get_post_meta($post->ID, '_almetal_lieu', true) ?: 'Puy-de-Dôme';
-    $terms = get_the_terms($post->ID, 'type_realisation');
-    $type_realisation = (!empty($terms) && !is_wp_error($terms)) ? $terms[0]->name : 'Métallerie';
-    
-    // Section "Pourquoi choisir AL Métallerie"
-    $why_choose = '<hr class="seo-separator">';
-    $why_choose .= '<div class="seo-why-choose">';
-    $why_choose .= '<h3>Pourquoi choisir AL Métallerie ?</h3>';
-    $why_choose .= '<ul>';
-    $why_choose .= '<li><strong>Expertise locale</strong> : Basés à Peschadoires, nous intervenons dans tout le Puy-de-Dôme</li>';
-    $why_choose .= '<li><strong>Savoir-faire artisanal</strong> : Plus de 20 ans d\'expérience en métallerie</li>';
-    $why_choose .= '<li><strong>Qualité garantie</strong> : Matériaux premium et finitions soignées</li>';
-    $why_choose .= '<li><strong>Sur-mesure</strong> : Chaque projet est unique et adapté à vos besoins</li>';
-    $why_choose .= '</ul>';
-    $why_choose .= '<p class="cta-contact">Vous avez un projet de ' . strtolower(esc_html($type_realisation)) . ' à ' . esc_html($lieu) . ' ou dans les environs ? <a href="' . esc_url(home_url('/contact')) . '" class="btn-contact">Contactez-nous pour un devis gratuit</a></p>';
-    $why_choose .= '</div>';
-    
-    return $content . $why_choose;
-}
-add_filter('the_content', 'almetal_seo_why_choose_us', 40);
+// function almetal_seo_why_choose_us($content) {
+//     // Fonction désactivée - contenu déplacé dans la sidebar
+//     return $content;
+// }
+// add_filter('the_content', 'almetal_seo_why_choose_us', 40);
 
 /**
  * 9. ENREGISTREMENT DU CSS POUR LES OPTIMISATIONS SEO

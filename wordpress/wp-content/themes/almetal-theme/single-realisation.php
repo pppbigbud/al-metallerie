@@ -260,6 +260,36 @@ if (almetal_is_mobile()) {
                                 </a>
                             </div>
                         </div>
+                        
+                        <!-- Bloc "Pourquoi choisir AL Métallerie" -->
+                        <div class="realisation-info-box realisation-why-choose">
+                            <h3><?php _e('Pourquoi choisir AL Métallerie ?', 'almetal'); ?></h3>
+                            
+                            <ul class="why-choose-list">
+                                <li>
+                                    <strong><?php _e('Expertise locale', 'almetal'); ?></strong>
+                                    <span><?php _e('Basés à Peschadoires, nous intervenons dans tout le Puy-de-Dôme', 'almetal'); ?></span>
+                                </li>
+                                <li>
+                                    <strong><?php _e('Savoir-faire artisanal', 'almetal'); ?></strong>
+                                    <span><?php _e('Plus de 20 ans d\'expérience en métallerie', 'almetal'); ?></span>
+                                </li>
+                                <li>
+                                    <strong><?php _e('Qualité garantie', 'almetal'); ?></strong>
+                                    <span><?php _e('Matériaux premium et finitions soignées', 'almetal'); ?></span>
+                                </li>
+                                <li>
+                                    <strong><?php _e('Sur-mesure', 'almetal'); ?></strong>
+                                    <span><?php _e('Chaque projet est unique et adapté à vos besoins', 'almetal'); ?></span>
+                                </li>
+                            </ul>
+                            
+                            <div class="realisation-cta">
+                                <a href="<?php echo esc_url(home_url('/contact')); ?>" class="btn btn-primary">
+                                    <?php _e('Demander un devis gratuit', 'almetal'); ?>
+                                </a>
+                            </div>
+                        </div>
                     </aside>
                 </div>
 
