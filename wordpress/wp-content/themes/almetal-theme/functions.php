@@ -303,6 +303,17 @@ function almetal_enqueue_scripts() {
             );
         }
         
+        // Filtrage archive réalisations (page archive uniquement)
+        if (is_post_type_archive('realisation') || is_tax('type_realisation')) {
+            wp_enqueue_script(
+                'almetal-mobile-archive-filter',
+                get_template_directory_uri() . '/assets/js/mobile-archive-filter.js',
+                array(),
+                wp_get_theme()->get('Version'),
+                true
+            );
+        }
+        
         // Slideshow single réalisation (single realisation uniquement)
         if (is_singular('realisation')) {
             // Swiper pour le slideshow
