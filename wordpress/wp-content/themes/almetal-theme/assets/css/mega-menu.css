@@ -2,19 +2,15 @@
    MEGA MENU - AL METALLERIE
    ============================================ */
 
-/* Container principal - Style harmonisé avec realisation-card */
+/* Container principal - Style visuel uniquement */
+/* NOTE: La disposition (Grid) est gérée par header-new.css */
 .header-mega {
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    /* PAS de display, align-items, justify-content ici - géré par header-new.css */
     padding: 0;
     background: #191919;
     border: var(--border-width) var(--border-style-solid) var(--border-color-muted);
     border-radius: 12px;
-    min-height: 82px;
-    width: 40vw;
-    margin: 0 auto;
     backdrop-filter: blur(10px);
     transition: all 0.4s ease;
 }
@@ -26,52 +22,56 @@
     transform: translateY(-3px);
 }
 
-/* Navigation */
+/* Navigation - STYLES VISUELS UNIQUEMENT */
+/* NOTE: display: grid et grid-template-columns sont dans header-new.css */
 .header-mega__nav {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    /* PAS de display, width, align-items ici - géré par header-new.css */
     position: relative;
-    padding: 0 60px;
-    min-height: 82px;
-    /* Hauteur fixe, indépendante du logo */
 }
 
+/* Listes - STYLES VISUELS UNIQUEMENT */
+/* NOTE: display: grid est dans header-new.css */
 .header-mega__list {
-    display: flex;
-    align-items: center;
-    gap: 70px;
-    margin: 0;
+    /* PAS de display, gap, margin ici - géré par header-new.css */
     padding: 0;
     list-style: none;
 }
 
+/* PAS de margin-right/left auto - le Grid gère l'alignement */
 .header-mega__list--left {
-    margin-right: auto;
+    /* justify-content: end est dans header-new.css */
 }
 
 .header-mega__list--right {
-    margin-left: auto;
+    /* justify-content: start est dans header-new.css */
 }
 
 .header-mega__item {
-    display: flex;
     position: relative;
-    padding: 30px 0 50px;
-    margin-bottom: -20px;
+}
+
+/* Zone de hover étendue pour les items avec mega menu */
+/* Crée un "pont" invisible entre le lien et le mega menu */
+.header-mega__item.has-megamenu::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 60px; /* Hauteur du pont jusqu'au mega menu */
+    background: transparent;
+    pointer-events: auto;
 }
 
 .header-mega__item>a {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: block;
     font-family: 'Poppins', sans-serif;
-    font-size: 16px;
     font-weight: 500;
     color: #fff;
     text-decoration: none;
     transition: var(--transition-normal);
+    /* font-size et padding sont dans header-new.css selon les breakpoints */
 }
 
 .header-mega__item>a svg {
@@ -87,15 +87,12 @@
 .header-mega__item:hover>a svg path {
     color: var(--color-primary);
     fill: var(--color-primary);
-
 }
 
-/* Logo centré - Sans fond ni bordure - Hors du flux */
+/* Logo centré - STYLES VISUELS UNIQUEMENT */
+/* NOTE: La position Grid est dans header-new.css */
 .header-mega__logo-center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    /* PAS de position: absolute - le Grid centre automatiquement */
     z-index: 9999;
     background: transparent;
     padding: 0;
@@ -147,9 +144,14 @@
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition: var(--transition-normal);
+    transition: var(--transition-normal), top 0.3s ease;
     box-shadow: 0 10px 40px rgba(240, 139, 24, 0.4);
     overflow: hidden;
+}
+
+/* Position du mega menu au scroll (header réduit) */
+.site-header.scrolled .megamenu-wrapper {
+    top: 70px;
 }
 
 /* Icône de catégorie en arrière-plan - invisible par défaut */
@@ -742,9 +744,7 @@
 
 /* Desktop (1440px - 1920px) */
 @media screen and (max-width: 1920px) {
-    .header-mega {
-        width: 45vw;
-    }
+    /* Largeur de .header-mega gérée par header-new.css (min-width: 60vw) */
 
     .header-mega__logo-center .site-logo-img {
         height: 140px;
@@ -761,20 +761,10 @@
 
 /* Laptop (1024px - 1440px) */
 @media screen and (max-width: 1440px) {
-    .header-mega {
-        width: 55vw;
-    }
-
-    .header-mega__nav {
-        padding: 0 40px;
-    }
-
-    .header-mega__list {
-        gap: 30px;
-    }
+    /* Layout géré par header-new.css */
 
     .header-mega__logo-center .site-logo-img {
-        height: 90px;
+        height: 120px;
     }
 
     .site-header.scrolled .header-mega__logo-center .site-logo-img {
@@ -804,30 +794,10 @@
 
 /* Tablet landscape (768px - 1024px) */
 @media screen and (max-width: 1024px) {
-    .header-mega {
-        width: 70vw;
-        min-height: 70px;
-    }
-
-    .header-mega__nav {
-        padding: 0 30px;
-        min-height: 70px;
-    }
-
-    .header-mega__list {
-        gap: 20px;
-    }
-
-    .header-mega__item {
-        padding: 20px 0 40px;
-    }
-
-    .header-mega__item>a {
-        font-size: 14px;
-    }
+    /* Layout géré par header-new.css */
 
     .header-mega__logo-center .site-logo-img {
-        height: 70px;
+        height: 90px;
     }
 
     .site-header.scrolled .header-mega__logo-center .site-logo-img {
@@ -837,7 +807,6 @@
     .megamenu-wrapper {
         max-width: 700px;
         min-width: 600px;
-        top: 75px;
         padding: 20px;
     }
 

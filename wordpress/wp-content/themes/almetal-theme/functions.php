@@ -94,7 +94,7 @@ function almetal_enqueue_scripts() {
             'almetal-header',
             get_template_directory_uri() . '/assets/css/header-new.css',
             array('almetal-style', 'almetal-components'),
-            wp_get_theme()->get('Version')
+            time() // Force le rechargement du cache
         );
         
         // Mega menu

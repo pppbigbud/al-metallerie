@@ -51,14 +51,29 @@
                         <ul class="header-mega__list header-mega__list--left">
                             <!-- Accueil -->
                             <li class="header-mega__item">
-                                <a href="<?php echo esc_url(home_url('/')); ?>"><?php esc_html_e('Accueil', 'almetal'); ?></a>
+                                <a href="<?php echo esc_url(home_url('/')); ?>">
+                                    <svg class="header-menu-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                        <polyline points="9 22 9 12 15 12 15 22"/>
+                                    </svg>
+                                    <span><?php esc_html_e('Accueil', 'almetal'); ?></span>
+                                </a>
                             </li>
                             
                             <!-- Réalisations avec mega menu -->
                             <li class="header-mega__item has-megamenu">
                                 <a href="<?php echo esc_url(home_url('/?post_type=realisation')); ?>">
+                                    <svg class="header-menu-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <!-- Torche de soudure -->
+                                        <path d="M14 4l-4 4 7 7 4-4-7-7z"/>
+                                        <path d="M10 8L4 14l2 2 6-6"/>
+                                        <path d="M17 11l3 3"/>
+                                        <path d="M19 9l2-2"/>
+                                        <circle cx="20" cy="4" r="2"/>
+                                        <path d="M4 20l2-2"/>
+                                    </svg>
                                     <span><?php esc_html_e('Réalisations', 'almetal'); ?></span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="9" height="5" viewBox="0 0 9 5" fill="none">
+                                    <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" width="9" height="5" viewBox="0 0 9 5" fill="none">
                                         <path fill-rule="evenodd" clip-rule="evenodd" d="M0.612712 0.200408C0.916245 -0.081444 1.39079 -0.0638681 1.67265 0.239665L4.37305 3.14779L7.07345 0.239665C7.35531 -0.0638681 7.82986 -0.081444 8.13339 0.200408C8.43692 0.48226 8.4545 0.956809 8.17265 1.26034L4.92265 4.76034C4.78074 4.91317 4.5816 5 4.37305 5C4.1645 5 3.96536 4.91317 3.82345 4.76034L0.573455 1.26034C0.291603 0.956809 0.309179 0.48226 0.612712 0.200408Z" fill="currentColor" />
                                     </svg>
                                 </a>
@@ -193,7 +208,7 @@
                             </li>
                         </ul>
                         
-                        <!-- Logo centré (positionné au-dessus du placeholder) -->
+                        <!-- Logo centré - CSS Grid garantit le centrage parfait -->
                         <div class="header-mega__logo-center">
                             <a href="<?php echo esc_url(home_url('/')); ?>" class="site-logo" rel="home" aria-label="<?php bloginfo('name'); ?> - Accueil">
                                 <?php
@@ -206,13 +221,11 @@
                                          alt="<?php bloginfo('name'); ?> - Logo" 
                                          class="site-logo-img"
                                          width="120"
-                                         height="40">
+                                         height="110">
                                     <?php
                                 }
                                 ?>
                             </a>
-                            <!-- Bouton invisible pour maintenir l'espacement uniforme -->
-                            <span class="header-mega__placeholder" aria-hidden="true"></span>
                         </div>
                         
                         <!-- Liens droite -->
@@ -220,8 +233,13 @@
                             <!-- Formations avec mega menu -->
                             <li class="header-mega__item has-megamenu">
                                 <a href="<?php echo esc_url(home_url('/formations/')); ?>">
+                                    <svg class="header-menu-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <!-- Graduation cap -->
+                                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                                        <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
+                                    </svg>
                                     <span><?php esc_html_e('Formations', 'almetal'); ?></span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="9" height="5" viewBox="0 0 9 5" fill="none">
+                                    <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" width="9" height="5" viewBox="0 0 9 5" fill="none">
                                         <path fill-rule="evenodd" clip-rule="evenodd" d="M0.612712 0.200408C0.916245 -0.081444 1.39079 -0.0638681 1.67265 0.239665L4.37305 3.14779L7.07345 0.239665C7.35531 -0.0638681 7.82986 -0.081444 8.13339 0.200408C8.43692 0.48226 8.4545 0.956809 8.17265 1.26034L4.92265 4.76034C4.78074 4.91317 4.5816 5 4.37305 5C4.1645 5 3.96536 4.91317 3.82345 4.76034L0.573455 1.26034C0.291603 0.956809 0.309179 0.48226 0.612712 0.200408Z" fill="currentColor" />
                                     </svg>
                                 </a>
@@ -257,7 +275,14 @@
                             
                             <!-- Contact -->
                             <li class="header-mega__item">
-                                <a href="<?php echo esc_url(home_url('/contact')); ?>"><?php esc_html_e('Contact', 'almetal'); ?></a>
+                                <a href="<?php echo esc_url(home_url('/contact')); ?>">
+                                    <svg class="header-menu-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <!-- Enveloppe -->
+                                        <rect x="2" y="4" width="20" height="16" rx="2"/>
+                                        <path d="M22 6l-10 7L2 6"/>
+                                    </svg>
+                                    <span><?php esc_html_e('Contact', 'almetal'); ?></span>
+                                </a>
                             </li>
                         </ul>
                     </nav>
