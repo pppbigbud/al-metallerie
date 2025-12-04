@@ -160,13 +160,21 @@ function almetal_enqueue_scripts() {
     - debug-images.css
     */
     
-    // Style de la page contact (seulement sur la page contact)
+    // Style et script de la page contact (seulement sur la page contact)
     if (is_page_template('page-contact.php') || is_page('contact')) {
         wp_enqueue_style(
             'almetal-contact',
             get_template_directory_uri() . '/assets/css/contact.css',
             array('almetal-style', 'almetal-components'),
             wp_get_theme()->get('Version')
+        );
+        
+        wp_enqueue_script(
+            'almetal-contact',
+            get_template_directory_uri() . '/assets/js/contact.js',
+            array('jquery'),
+            wp_get_theme()->get('Version'),
+            true
         );
     }
     
