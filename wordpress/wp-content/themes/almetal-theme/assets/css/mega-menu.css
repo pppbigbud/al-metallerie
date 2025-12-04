@@ -681,6 +681,28 @@
     transform: translateY(-2.5px);
 }
 
+/* Style pour les icônes SVG (remplace les images) */
+.megamenu-formation-card__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    padding: 20px 0;
+}
+
+.megamenu-formation-card__icon svg {
+    width: 48px;
+    height: 48px;
+    color: var(--color-primary, #F08B18);
+    stroke: var(--color-primary, #F08B18);
+    transition: transform 0.3s ease;
+}
+
+.megamenu-formation-card:hover .megamenu-formation-card__icon svg {
+    transform: scale(1.1);
+}
+
+/* Ancien style image (conservé pour compatibilité) */
 .megamenu-formation-card__image {
     margin-bottom: 20px;
     border-radius: 13px;

@@ -193,7 +193,7 @@
                             </li>
                         </ul>
                         
-                        <!-- Logo centré -->
+                        <!-- Logo centré (positionné au-dessus du placeholder) -->
                         <div class="header-mega__logo-center">
                             <a href="<?php echo esc_url(home_url('/')); ?>" class="site-logo" rel="home" aria-label="<?php bloginfo('name'); ?> - Accueil">
                                 <?php
@@ -211,6 +211,8 @@
                                 }
                                 ?>
                             </a>
+                            <!-- Bouton invisible pour maintenir l'espacement uniforme -->
+                            <span class="header-mega__placeholder" aria-hidden="true"></span>
                         </div>
                         
                         <!-- Liens droite -->
@@ -226,15 +228,25 @@
                                 <div class="megamenu-wrapper megamenu-wrapper--formations">
                                     <div class="megamenu-formations">
                                         <a href="<?php echo esc_url(home_url('/formations-particuliers/')); ?>" class="megamenu-formation-card">
-                                            <div class="megamenu-formation-card__image">
-                                                <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/hero/hero-1.png'); ?>" alt="Formations Particuliers">
+                                            <div class="megamenu-formation-card__icon">
+                                                <!-- Icône Personne (Particuliers) -->
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                    <circle cx="12" cy="7" r="4"/>
+                                                    <path d="M5.5 21a6.5 6.5 0 0 1 13 0"/>
+                                                </svg>
                                             </div>
                                             <div class="megamenu-formation-card__title"><?php esc_html_e('Formations Particuliers', 'almetal'); ?></div>
                                             <div class="megamenu-formation-card__text"><?php esc_html_e('Apprenez les bases de la métallerie pour vos projets personnels', 'almetal'); ?></div>
                                         </a>
                                         <a href="<?php echo esc_url(home_url('/formations-professionnels/')); ?>" class="megamenu-formation-card">
-                                            <div class="megamenu-formation-card__image">
-                                                <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/hero/hero-2.png'); ?>" alt="Formations Professionnels">
+                                            <div class="megamenu-formation-card__icon">
+                                                <!-- Icône Mallette (Professionnels) -->
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                    <rect x="3" y="7" width="18" height="13" rx="2"/>
+                                                    <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                                    <path d="M12 12v2"/>
+                                                    <path d="M3 12h18"/>
+                                                </svg>
                                             </div>
                                             <div class="megamenu-formation-card__title"><?php esc_html_e('Formations Professionnels', 'almetal'); ?></div>
                                             <div class="megamenu-formation-card__text"><?php esc_html_e('Perfectionnez vos compétences en métallerie professionnelle', 'almetal'); ?></div>
@@ -245,7 +257,7 @@
                             
                             <!-- Contact -->
                             <li class="header-mega__item">
-                                <a href="<?php echo esc_url(home_url('/?page_id=10')); ?>"><?php esc_html_e('Contact', 'almetal'); ?></a>
+                                <a href="<?php echo esc_url(home_url('/contact')); ?>"><?php esc_html_e('Contact', 'almetal'); ?></a>
                             </li>
                         </ul>
                     </nav>

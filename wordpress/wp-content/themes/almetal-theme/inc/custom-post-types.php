@@ -65,12 +65,162 @@ function almetal_register_realisations_cpt() {
         'publicly_queryable'    => true,
         'capability_type'       => 'post',
         'show_in_rest'          => true, // Support Gutenberg
-        'rewrite'               => array('slug' => 'realisations'),
+        'rewrite'               => false, // Désactivé - on gère manuellement les URLs
     );
 
     register_post_type('realisation', $args);
 }
 add_action('init', 'almetal_register_realisations_cpt', 0);
+
+/**
+ * Générer les URLs personnalisées pour les réalisations
+ * Format: /realisations/categories-ville-jour-mois-annee
+ */
+function almetal_realisation_custom_permalink($permalink, $post, $leavename) {
+    // Uniquement pour les réalisations
+    if (!is_object($post) || $post->post_type !== 'realisation') {
+        return $permalink;
+    }
+    
+    // Récupérer les catégories (types de réalisation)
+    $terms = get_the_terms($post->ID, 'type_realisation');
+    $categories_slug = '';
+    
+    if (!empty($terms) && !is_wp_error($terms)) {
+        $slugs = array();
+        foreach ($terms as $term) {
+            $slugs[] = $term->slug;
+        }
+        // Trier alphabétiquement pour cohérence
+        sort($slugs);
+        $categories_slug = implode('-', $slugs);
+    } else {
+        $categories_slug = 'realisation';
+    }
+    
+    // Récupérer la ville
+    $ville = get_post_meta($post->ID, '_almetal_lieu', true);
+    if (empty($ville)) {
+        $ville = 'france';
+    }
+    // Nettoyer la ville pour l'URL
+    $ville_slug = sanitize_title($ville);
+    
+    // Récupérer la date de réalisation ou la date de publication
+    $date_realisation = get_post_meta($post->ID, '_almetal_date_realisation', true);
+    if (!empty($date_realisation)) {
+        $timestamp = strtotime($date_realisation);
+    } else {
+        $timestamp = strtotime($post->post_date);
+    }
+    $date_slug = date('d-m-Y', $timestamp);
+    
+    // Construire l'URL finale (sans le titre/slug du post)
+    $custom_permalink = home_url('/realisations/' . $categories_slug . '-' . $ville_slug . '-' . $date_slug . '/');
+    
+    return $custom_permalink;
+}
+add_filter('post_type_link', 'almetal_realisation_custom_permalink', 10, 3);
+
+/**
+ * Ajouter les règles de réécriture pour les URLs personnalisées
+ */
+function almetal_realisation_rewrite_rules() {
+    // Règle pour l'archive des réalisations
+    add_rewrite_rule(
+        '^realisations/?$',
+        'index.php?post_type=realisation',
+        'top'
+    );
+    
+    // Règle pour capturer: /realisations/[categories]-[ville]-[date]
+    add_rewrite_rule(
+        '^realisations/([^/]+)/?$',
+        'index.php?post_type=realisation&realisation_custom_slug=$matches[1]',
+        'top'
+    );
+}
+add_action('init', 'almetal_realisation_rewrite_rules', 10);
+
+/**
+ * Enregistrer la query var personnalisée
+ */
+function almetal_realisation_query_vars($vars) {
+    $vars[] = 'realisation_custom_slug';
+    return $vars;
+}
+add_filter('query_vars', 'almetal_realisation_query_vars');
+
+/**
+ * Résoudre l'URL personnalisée vers le bon post
+ */
+function almetal_realisation_parse_request($wp) {
+    if (!isset($wp->query_vars['realisation_custom_slug'])) {
+        return;
+    }
+    
+    $custom_slug = $wp->query_vars['realisation_custom_slug'];
+    
+    // Extraire la date (format: dd-mm-yyyy à la fin)
+    if (preg_match('/^(.+)-(\d{2}-\d{2}-\d{4})$/', $custom_slug, $matches)) {
+        $slug_without_date = $matches[1];
+        $date_str = $matches[2];
+        
+        // Convertir la date
+        $date_parts = explode('-', $date_str);
+        $date_formatted = $date_parts[2] . '-' . $date_parts[1] . '-' . $date_parts[0]; // Y-m-d
+        
+        // Rechercher le post correspondant
+        $args = array(
+            'post_type' => 'realisation',
+            'posts_per_page' => -1,
+            'post_status' => 'publish',
+        );
+        
+        $posts = get_posts($args);
+        
+        foreach ($posts as $post) {
+            // Reconstruire le slug attendu pour ce post
+            $terms = get_the_terms($post->ID, 'type_realisation');
+            $categories_slug = '';
+            
+            if (!empty($terms) && !is_wp_error($terms)) {
+                $slugs = array();
+                foreach ($terms as $term) {
+                    $slugs[] = $term->slug;
+                }
+                sort($slugs);
+                $categories_slug = implode('-', $slugs);
+            } else {
+                $categories_slug = 'realisation';
+            }
+            
+            $ville = get_post_meta($post->ID, '_almetal_lieu', true);
+            $ville_slug = !empty($ville) ? sanitize_title($ville) : 'france';
+            
+            $expected_slug = $categories_slug . '-' . $ville_slug;
+            
+            // Vérifier la date
+            $post_date = get_post_meta($post->ID, '_almetal_date_realisation', true);
+            if (empty($post_date)) {
+                $post_date = $post->post_date;
+            }
+            $post_date_formatted = date('Y-m-d', strtotime($post_date));
+            
+            if ($expected_slug === $slug_without_date && $post_date_formatted === $date_formatted) {
+                // Trouvé ! Rediriger vers ce post
+                $wp->query_vars = array(
+                    'post_type' => 'realisation',
+                    'p' => $post->ID,
+                    'name' => $post->post_name,
+                );
+                unset($wp->query_vars['realisation_custom_slug']);
+                return;
+            }
+        }
+    }
+}
+add_action('parse_request', 'almetal_realisation_parse_request');
 
 /**
  * Enregistrer la taxonomie "Type de réalisation"

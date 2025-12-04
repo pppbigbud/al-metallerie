@@ -7,16 +7,16 @@
  */
 
 /* Header spécifique pour la page contact */
-.page-template-page-contact .site-header {
+/* .page-template-page-contact .site-header {
     background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 100%);
     backdrop-filter: blur(10px);
-}
+} */
 
 /* Header au scroll reste transparent */
-.page-template-page-contact .site-header.scrolled {
+/* .page-template-page-contact .site-header.scrolled {
     background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 100%);
     backdrop-filter: blur(10px);
-}
+} */
 
 /* Container principal */
 .contact-page {
