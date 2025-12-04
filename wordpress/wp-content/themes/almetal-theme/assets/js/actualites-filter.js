@@ -11,17 +11,22 @@ jQuery(document).ready(function($) {
     // Sélecteur plus spécifique pour éviter les conflits
     const cards = $('.actualites-section .actualites-grid .realisation-card');
     
+    // Détection mobile (même breakpoint que le CSS)
+    const isMobile = window.innerWidth <= 768;
+    const maxCards = isMobile ? 3 : 6; // 3 sur mobile, 6 sur desktop
+    
     console.log('Nombre de boutons de filtre:', filterBtns.length);
     console.log('Nombre de cartes:', cards.length);
+    console.log('Mode:', isMobile ? 'Mobile' : 'Desktop', '- Max cartes:', maxCards);
     
     if (!filterBtns.length || !cards.length) {
         console.warn('⚠️ Éléments de filtrage non trouvés');
         return;
     }
     
-    // Initialisation : afficher seulement les 3 premières cartes
+    // Initialisation : afficher seulement les premières cartes selon le device
     cards.each(function(index) {
-        if (index >= 3) {
+        if (index >= maxCards) {
             $(this).hide();
         }
     });
@@ -44,11 +49,14 @@ jQuery(document).ready(function($) {
             const filterClass = filter.replace('.', '');
             
             if (filter === '*') {
-                // Afficher toutes les cartes (limitées aux 3 premières)
-                visibleCards = cards.slice(0, 3);
+                // Afficher toutes les cartes (limitées selon device)
+                // Utiliser une boucle pour créer un tableau comme pour les autres filtres
+                for (let i = 0; i < cards.length && visibleCards.length < maxCards; i++) {
+                    visibleCards.push($(cards[i]));
+                }
             } else {
-                // Filtrer manuellement par catégorie et limiter à 3
-                for (let i = 0; i < cards.length && visibleCards.length < 3; i++) {
+                // Filtrer manuellement par catégorie et limiter selon device
+                for (let i = 0; i < cards.length && visibleCards.length < maxCards; i++) {
                     const $card = $(cards[i]);
                     const categories = $card.attr('data-categories') || '';
                     const classList = $card.attr('class') || '';

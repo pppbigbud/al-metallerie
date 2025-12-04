@@ -369,11 +369,14 @@
     }
 
     /**
-     * Filtrage des réalisations par type
+     * Filtrage des réalisations par type (page archive uniquement)
+     * NOTE: Le filtrage de la section actualités homepage est géré par actualites-filter.js
      */
     function initRealisationsFilter() {
-        const filterBtns = $('.filter-btn');
-        const realisationCards = $('.realisation-card');
+        // Sélecteur spécifique pour la page archive des réalisations uniquement
+        // Exclut la section actualités de la homepage et la section services
+        const filterBtns = $('.archive-realisations .filter-btn, .realisations-archive .filter-btn');
+        const realisationCards = $('.archive-realisations .realisation-card, .realisations-archive .realisation-card');
 
         if (!filterBtns.length || !realisationCards.length) {
             return;

@@ -288,6 +288,13 @@
     display: flex;
     gap: 1rem;
     align-items: center;
+    border: none !important;
+    text-decoration: none !important;
+}
+
+.footer-bottom-links::after,
+.footer-bottom-links::before {
+    display: none !important;
 }
 
 .footer-bottom-links a {
