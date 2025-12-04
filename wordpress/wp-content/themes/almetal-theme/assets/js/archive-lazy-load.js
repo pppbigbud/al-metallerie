@@ -87,14 +87,13 @@
         if (filter === '*') {
             filteredCards = [...allCards];
         } else {
+            // Le filtre est au format ".type-slug", on enlève juste le point
             const filterClass = filter.replace('.', '');
+            
             filteredCards = allCards.filter(card => {
-                return card.classList.contains(filterClass) || 
-                       card.classList.contains('type-' + filterClass);
+                return card.classList.contains(filterClass);
             });
         }
-        
-        console.log('🔍 Filtre appliqué:', filter, '-', filteredCards.length, 'cartes');
     }
 
     /**

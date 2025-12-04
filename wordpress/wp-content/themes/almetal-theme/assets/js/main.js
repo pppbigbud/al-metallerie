@@ -371,8 +371,15 @@
     /**
      * Filtrage des réalisations par type (page archive uniquement)
      * NOTE: Le filtrage de la section actualités homepage est géré par actualites-filter.js
+     * NOTE: Le filtrage de la page archive est maintenant géré par archive-lazy-load.js
      */
     function initRealisationsFilter() {
+        // Si archive-lazy-load.js est actif (page archive avec lazy loading), ne pas initialiser
+        if (document.querySelector('.archive-page .archive-grid.realisations-grid')) {
+            console.log('Filtrage géré par archive-lazy-load.js - main.js désactivé');
+            return;
+        }
+        
         // Sélecteur spécifique pour la page archive des réalisations uniquement
         // Exclut la section actualités de la homepage et la section services
         const filterBtns = $('.archive-realisations .filter-btn, .realisations-archive .filter-btn');
