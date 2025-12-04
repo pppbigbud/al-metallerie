@@ -2,6 +2,7 @@
 /**
  * Template Name: Formations
  * Description: Page parente des formations en ferronnerie
+ * Design inspiré des pages légales
  * 
  * @package ALMetallerie
  * @since 1.0.0
@@ -10,25 +11,30 @@
 get_header();
 ?>
 
-<main class="container section">
-    <div class="formations-hero text-center mb-lg">
-        <h1 class="formations-main-title mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; color: var(--color-primary);">
-                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-            </svg>
-            Nos Formations en Ferronnerie
-        </h1>
-        <p class="formations-intro" style="font-size: 1.2rem; color: var(--color-text-light); max-width: 800px; margin: 0 auto; line-height: 1.8;">
-            Découvrez nos formations professionnelles en ferronnerie d'art et métallerie. 
-            Que vous soyez particulier passionné ou professionnel en reconversion, 
-            nous vous accompagnons dans l'apprentissage des techniques traditionnelles et modernes.
-        </p>
-        <div class="separator separator--animated mt-3 mb-3"></div>
+<div class="archive-page formations-archive">
+    <!-- Hero Section -->
+    <div class="archive-hero">
+        <div class="container">
+            <h1 class="archive-title">
+                <svg class="archive-icon" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                </svg>
+                <?php _e('Nos Formations en Ferronnerie', 'almetal'); ?>
+            </h1>
+            <p class="archive-subtitle">
+                Découvrez nos <strong>formations professionnelles en ferronnerie d'art</strong> et métallerie. 
+                Que vous soyez <strong>particulier passionné</strong> ou <strong>professionnel en reconversion</strong>, 
+                nous vous accompagnons dans l'apprentissage des <em>techniques traditionnelles</em> et <em>modernes</em>.
+            </p>
+        </div>
     </div>
 
-    <!-- Grille des formations -->
-    <div class="formations-grid">
+    <!-- Contenu principal -->
+    <div class="archive-content">
+        <div class="container">
+            <!-- Grille des formations -->
+            <div class="archive-grid formations-grid">
         <!-- Carte Particuliers -->
         <a href="<?php echo esc_url(home_url('/formations-particuliers')); ?>" class="formation-card card card-primary hover-lift">
             <div class="formation-card-icon mb-2">
@@ -129,85 +135,73 @@ get_header();
                 <span class="button-text">Découvrir</span>
             </div>
         </a>
-    </div>
-
-    <!-- Section avantages -->
-    <div class="formations-advantages mt-lg">
-        <h2 class="text-center mb-3" style="font-size: 2rem; color: var(--color-primary);">
-            Pourquoi choisir nos formations ?
-        </h2>
-        <div class="formations-advantages-grid">
-            <div class="card card--light p-md">
-                <div class="card-item-icon mb-2 icon-animated--pulse">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 20h9"></path>
-                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                    </svg>
-                </div>
-                <h3 style="font-size: 1.3rem; color: var(--color-text-light); margin-bottom: 0.5rem;">Atelier équipé</h3>
-                <p style="color: var(--color-text); line-height: 1.6;">
-                    Accès à un atelier professionnel avec tout le matériel nécessaire : forge, enclume, outils de découpe et de soudure.
-                </p>
             </div>
 
-            <div class="card card--light p-md">
-                <div class="card-item-icon mb-2 icon-animated--pulse">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                    </svg>
+            <!-- Section avantages -->
+            <div class="formations-advantages">
+                <h2><?php _e('Pourquoi choisir nos formations ?', 'almetal'); ?></h2>
+                <div class="formations-advantages-grid">
+                    <div class="card">
+                        <div class="card-item-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 20h9"></path>
+                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                            </svg>
+                        </div>
+                        <h3><?php _e('Atelier équipé', 'almetal'); ?></h3>
+                        <p><?php _e('Accès à un atelier professionnel avec tout le matériel nécessaire : forge, enclume, outils de découpe et de soudure.', 'almetal'); ?></p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-item-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <h3><?php _e('Formateurs experts', 'almetal'); ?></h3>
+                        <p><?php _e('Apprenez auprès d\'artisans ferronniers expérimentés, passionnés par la transmission de leur savoir-faire.', 'almetal'); ?></p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-item-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                            </svg>
+                        </div>
+                        <h3><?php _e('Pratique intensive', 'almetal'); ?></h3>
+                        <p><?php _e('80% de pratique pour maîtriser rapidement les gestes techniques et créer vos propres réalisations.', 'almetal'); ?></p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-item-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                        <h3><?php _e('Suivi personnalisé', 'almetal'); ?></h3>
+                        <p><?php _e('Groupes restreints pour un accompagnement individualisé et adapté à votre niveau et vos objectifs.', 'almetal'); ?></p>
+                    </div>
                 </div>
-                <h3 style="font-size: 1.3rem; color: var(--color-text-light); margin-bottom: 0.5rem;">Formateurs experts</h3>
-                <p style="color: var(--color-text); line-height: 1.6;">
-                    Apprenez auprès d'artisans ferronniers expérimentés, passionnés par la transmission de leur savoir-faire.
-                </p>
             </div>
 
-            <div class="card card--light p-md">
-                <div class="card-item-icon mb-2 icon-animated--pulse">
+            <!-- CTA Contact -->
+            <div class="formations-cta">
+                <h2><?php _e('Une question sur nos formations ?', 'almetal'); ?></h2>
+                <p><?php _e('Contactez-nous pour obtenir plus d\'informations ou pour réserver votre place.', 'almetal'); ?></p>
+                <a href="<?php echo esc_url(home_url('/contact')); ?>" class="btn-primary">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                     </svg>
-                </div>
-                <h3 style="font-size: 1.3rem; color: var(--color-text-light); margin-bottom: 0.5rem;">Pratique intensive</h3>
-                <p style="color: var(--color-text); line-height: 1.6;">
-                    80% de pratique pour maîtriser rapidement les gestes techniques et créer vos propres réalisations.
-                </p>
-            </div>
-
-            <div class="card card--light p-md">
-                <div class="card-item-icon mb-2 icon-animated--pulse">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                    </svg>
-                </div>
-                <h3 style="font-size: 1.3rem; color: var(--color-text-light); margin-bottom: 0.5rem;">Suivi personnalisé</h3>
-                <p style="color: var(--color-text); line-height: 1.6;">
-                    Groupes restreints pour un accompagnement individualisé et adapté à votre niveau et vos objectifs.
-                </p>
+                    <?php _e('Nous contacter', 'almetal'); ?>
+                </a>
             </div>
         </div>
     </div>
-
-    <!-- CTA Contact -->
-    <div class="formations-cta text-center mt-lg">
-        <h2 style="font-size: 2rem; color: var(--color-text-light); margin-bottom: 1rem;">
-            Une question sur nos formations ?
-        </h2>
-        <p style="font-size: 1.1rem; color: var(--color-text); margin-bottom: 2rem;">
-            Contactez-nous pour obtenir plus d'informations ou pour réserver votre place.
-        </p>
-        <a href="<?php echo esc_url(home_url('/contact')); ?>" class="btn btn-primary btn-large">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
-            Nous contacter
-        </a>
-    </div>
-</main>
+</div>
 
 <?php
 get_footer();

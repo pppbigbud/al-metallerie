@@ -379,6 +379,30 @@ function almetal_enqueue_scripts() {
         );
     }
     
+    // CSS des pages archives (Réalisations et Formations)
+    if (is_post_type_archive('realisation') || 
+        is_page_template('page-formations.php') ||
+        is_page('formations') ||
+        is_page('realisations')) {
+        wp_enqueue_style(
+            'almetal-archive-pages',
+            get_template_directory_uri() . '/assets/css/archive-pages.css',
+            array('almetal-style'),
+            wp_get_theme()->get('Version')
+        );
+    }
+    
+    // Script de lazy loading pour la page archive des réalisations
+    if (is_post_type_archive('realisation') || is_page('realisations')) {
+        wp_enqueue_script(
+            'almetal-archive-lazy-load',
+            get_template_directory_uri() . '/assets/js/archive-lazy-load.js',
+            array(),
+            wp_get_theme()->get('Version'),
+            true
+        );
+    }
+    
     // Script de filtrage des actualités - DÉSACTIVÉ (doublon, déjà chargé ligne 200)
     /* if (is_front_page() || is_home()) {
         wp_enqueue_script(

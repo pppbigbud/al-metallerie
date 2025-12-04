@@ -1,6 +1,7 @@
 <?php
 /**
  * Template pour l'archive des réalisations
+ * Design inspiré des pages légales
  * 
  * @package ALMetallerie
  * @since 1.0.0
@@ -9,26 +10,28 @@
 get_header();
 ?>
 
-<div class="realisations-archive">
-    <div class="container">
-        <header class="page-header">
-            <h1 class="page-title"><?php _e('Nos Réalisations', 'almetal'); ?></h1>
-            <div class="archive-description">
-                <p>
-                    Découvrez <strong>l'ensemble de nos réalisations en métallerie</strong> à travers la région Auvergne-Rhône-Alpes. 
-                    Spécialisés dans la <strong>fabrication sur mesure</strong>, nous concevons et installons des <em>portails</em>, 
-                    <em>garde-corps</em>, <em>escaliers métalliques</em>, <em>pergolas</em> et <em>grilles de sécurité</em> 
-                    alliant <strong>esthétique moderne</strong> et <strong>robustesse</strong>.
-                </p>
-                <p>
-                    Chaque projet est unique et reflète notre <strong>savoir-faire artisanal</strong> ainsi que notre engagement 
-                    pour la <strong>qualité</strong>. Que ce soit pour des <a href="#contact" class="description-link">particuliers</a> 
-                    ou des <a href="#contact" class="description-link">professionnels</a>, nous mettons notre expertise au service 
-                    de vos <strong>projets de métallerie</strong> avec des <em>finitions soignées</em> et des <em>matériaux durables</em>.
-                </p>
-            </div>
-            <div class="page-header-separator"></div>
-        </header>
+<div class="archive-page realisations-archive">
+    <!-- Hero Section -->
+    <div class="archive-hero">
+        <div class="container">
+            <h1 class="archive-title">
+                <svg class="archive-icon" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                </svg>
+                <?php _e('Nos Réalisations', 'almetal'); ?>
+            </h1>
+            <p class="archive-subtitle">
+                Découvrez <strong>l'ensemble de nos réalisations en métallerie</strong> à travers la région Auvergne-Rhône-Alpes. 
+                Spécialisés dans la <strong>fabrication sur mesure</strong>, nous concevons et installons des <em>portails</em>, 
+                <em>garde-corps</em>, <em>escaliers métalliques</em>, <em>pergolas</em> et <em>grilles de sécurité</em> 
+                alliant <strong>esthétique moderne</strong> et <strong>robustesse</strong>.
+            </p>
+        </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="archive-content">
+        <div class="container">
 
         <?php
         // Filtres par type de réalisation
@@ -39,7 +42,7 @@ get_header();
 
         if ($terms && !is_wp_error($terms)) :
             ?>
-            <div class="realisations-filters">
+            <div class="archive-filters">
                 <?php
                 // Compter le total de réalisations
                 $total_count = wp_count_posts('realisation')->publish;
@@ -84,7 +87,7 @@ get_header();
         ?>
 
         <?php if (have_posts()) : ?>
-            <div class="realisations-grid">
+            <div class="archive-grid realisations-grid">
                 <?php
                 while (have_posts()) :
                     the_post();
@@ -197,10 +200,11 @@ get_header();
             ?>
 
         <?php else : ?>
-            <div class="no-realisations">
+            <div class="no-results">
                 <p><?php _e('Aucune réalisation pour le moment.', 'almetal'); ?></p>
             </div>
         <?php endif; ?>
+        </div>
     </div>
 </div>
 
