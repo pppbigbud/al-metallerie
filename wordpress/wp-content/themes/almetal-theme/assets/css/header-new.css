@@ -183,6 +183,7 @@
     .header-mega__item > a .dropdown-arrow {
         margin-left: 4px;
         transition: transform 0.3s ease;
+        margin-bottom: 2px;
     }
 
     .header-mega__item.has-megamenu:hover > a .dropdown-arrow {
