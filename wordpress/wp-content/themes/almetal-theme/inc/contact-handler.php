@@ -62,7 +62,7 @@ function almetal_handle_contact_form() {
     }
 
     // Préparer l'email
-    $to = 'pppbigbud@gmail.com';
+    $to = 'aurelien@al-metallerie.fr';
     $subject = 'Nouvelle demande de contact - ' . $project_type;
     
     // Corps de l'email en HTML
@@ -155,7 +155,7 @@ function almetal_handle_contact_form() {
                     <p>En attendant, n\'hésitez pas à nous contacter directement :</p>
                     <ul>
                         <li>Téléphone : <a href="tel:+33673333532">06 73 33 35 32</a></li>
-                        <li>Email : <a href="mailto:al.metallerie.soudure@orange.fr">al.metallerie.soudure@orange.fr</a></li>
+                        <li>Email : <a href="mailto:aurelien@al-metallerie.fr">aurelien@al-metallerie.fr</a></li>
                         <li>Adresse : 14 route de Maringues, 63920 Peschadoires</li>
                     </ul>
                     <p>Cordialement,<br>L\'équipe AL Métallerie</p>
@@ -170,7 +170,7 @@ function almetal_handle_contact_form() {
 
         $client_headers = array(
             'Content-Type: text/html; charset=UTF-8',
-            'From: AL Métallerie <al.metallerie.soudure@orange.fr>'
+            'From: AL Métallerie <aurelien@al-metallerie.fr>'
         );
 
         wp_mail($email, $client_subject, $client_body, $client_headers);
