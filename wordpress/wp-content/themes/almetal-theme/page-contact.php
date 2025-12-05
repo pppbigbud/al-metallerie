@@ -179,12 +179,7 @@ if (function_exists('wp_body_open')) {
                         <textarea id="contact-message" name="contact_message" rows="5" required></textarea>
                     </div>
 
-                    <div class="form-group form-checkbox">
-                        <label>
-                            <input type="checkbox" name="contact_consent" required>
-                            <span><?php _e('J\'accepte que mes données soient utilisées pour me recontacter', 'almetal'); ?> *</span>
-                        </label>
-                    </div>
+                    <input type="hidden" name="contact_consent" value="1">
 
                     <button type="submit" class="contact-submit-btn">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -193,6 +188,7 @@ if (function_exists('wp_body_open')) {
                         </svg>
                         <?php _e('Envoyer ma demande', 'almetal'); ?>
                     </button>
+                    <p class="form-consent-text"><?php _e('En cliquant sur "Envoyer ma demande", vous acceptez que vos données soient utilisées pour vous recontacter.', 'almetal'); ?></p>
 
                     <div class="form-message" style="display: none;"></div>
                 </form>

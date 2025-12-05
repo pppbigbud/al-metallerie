@@ -398,6 +398,15 @@
     color: #f44336;
 }
 
+/* Texte de consentement sous le bouton */
+.form-consent-text {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    line-height: 1.4;
+}
+
 /* Boutons d'action rapide dans le formulaire */
 .contact-quick-actions {
     display: grid;
