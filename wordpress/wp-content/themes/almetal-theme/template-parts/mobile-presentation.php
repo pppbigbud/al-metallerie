@@ -17,20 +17,26 @@
         <!-- Bloc images - animation au scroll -->
         <div class="presentation-images scroll-fade scroll-delay-1">
             <div class="presentation-image-wrapper presentation-image-top">
-                <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/gallery/pexels-kelly-2950108 1.png'); ?>" 
-                     alt="Soudeur professionnel AL-Metallerie en action à Thiers"
-                     class="presentation-img"
-                     loading="lazy"
-                     width="300"
-                     height="400">
+                <picture>
+                    <source srcset="<?php echo esc_url(get_template_directory_uri() . '/assets/images/gallery/pexels-kelly-2950108 1.webp'); ?>" type="image/webp">
+                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/gallery/pexels-kelly-2950108 1.png'); ?>" 
+                         alt="Soudeur professionnel AL-Metallerie en action à Thiers"
+                         class="presentation-img"
+                         loading="lazy"
+                         width="300"
+                         height="400">
+                </picture>
             </div>
             <div class="presentation-image-wrapper presentation-image-bottom">
-                <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/gallery/pexels-rik-schots-11624248 2.png'); ?>" 
-                     alt="Travaux de métallerie de précision à Thiers, Puy-de-Dôme"
-                     class="presentation-img"
-                     loading="lazy"
-                     width="300"
-                     height="400">
+                <picture>
+                    <source srcset="<?php echo esc_url(get_template_directory_uri() . '/assets/images/gallery/pexels-rik-schots-11624248 2.webp'); ?>" type="image/webp">
+                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/gallery/pexels-rik-schots-11624248 2.png'); ?>" 
+                         alt="Travaux de métallerie de précision à Thiers, Puy-de-Dôme"
+                         class="presentation-img"
+                         loading="lazy"
+                         width="300"
+                         height="400">
+                </picture>
             </div>
         </div>
 

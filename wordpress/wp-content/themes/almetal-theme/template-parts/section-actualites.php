@@ -110,7 +110,7 @@ $realisations_query = new WP_Query(array(
                     // Image à la une
                     $thumbnail_url = get_the_post_thumbnail_url(get_the_ID(), 'large');
                     if (!$thumbnail_url) {
-                        $thumbnail_url = get_template_directory_uri() . '/assets/images/gallery/pexels-kelly-2950108 1.png';
+                        $thumbnail_url = get_template_directory_uri() . '/assets/images/gallery/pexels-kelly-2950108 1.webp';
                     }
                     ?>
                     

@@ -24,10 +24,14 @@
             <!-- Carte 1 : Formation (page principale) -->
             <article class="service-card realisation-card">
                 <div class="realisation-image-wrapper">
-                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/gallery/pexels-kelly-2950108 1.png'); ?>" 
-                         alt="Formation métallerie et soudure à Thiers - AL Metallerie"
-                         class="realisation-image"
-                         loading="lazy">
+                    <picture>
+                        <source srcset="<?php echo esc_url(get_template_directory_uri() . '/assets/images/gallery/pexels-kelly-2950108 1.webp'); ?>" type="image/webp">
+                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/gallery/pexels-kelly-2950108 1.png'); ?>" 
+                             alt="Formation métallerie et soudure à Thiers - AL Metallerie"
+                             class="realisation-image"
+                             loading="lazy"
+                             width="400" height="498">
+                    </picture>
                 </div>
                 <div class="realisation-content">
                     <h3 class="realisation-title">
@@ -50,10 +54,14 @@
             <!-- Carte 2 : Particuliers -->
             <article class="service-card realisation-card">
                 <div class="realisation-image-wrapper">
-                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/gallery/pexels-rik-schots-11624248 2.png'); ?>" 
-                         alt="Formation métallerie pour particuliers à Thiers"
-                         class="realisation-image"
-                         loading="lazy">
+                    <picture>
+                        <source srcset="<?php echo esc_url(get_template_directory_uri() . '/assets/images/gallery/pexels-rik-schots-11624248 2.webp'); ?>" type="image/webp">
+                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/gallery/pexels-rik-schots-11624248 2.png'); ?>" 
+                             alt="Formation métallerie pour particuliers à Thiers"
+                             class="realisation-image"
+                             loading="lazy"
+                             width="439" height="293">
+                    </picture>
                 </div>
                 <div class="realisation-content">
                     <h3 class="realisation-title">
