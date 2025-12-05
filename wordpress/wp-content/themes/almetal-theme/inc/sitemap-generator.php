@@ -131,18 +131,18 @@ function almetal_sitemap_url($loc, $lastmod, $changefreq, $priority, $image_url 
 
 /**
  * Servir le sitemap dynamique - Méthode directe (sans rewrite rules)
+ * Utilise le hook 'parse_request' qui s'exécute avant la résolution 404
  */
-function almetal_serve_sitemap_early() {
+function almetal_serve_sitemap_early($wp) {
     // Vérifier si c'est une requête pour le sitemap
     $request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+    $request = isset($wp->request) ? $wp->request : '';
     
     // Détecter sitemap.xml dans l'URL
-    if (preg_match('/sitemap\.xml/i', $request_uri)) {
-        // S'assurer que WordPress est chargé
-        if (!defined('ABSPATH')) {
-            return;
-        }
+    if ($request === 'sitemap.xml' || preg_match('/^sitemap\.xml$/i', $request) || preg_match('/\/sitemap\.xml$/i', $request_uri)) {
         
+        // Empêcher WordPress de continuer
+        status_header(200);
         header('Content-Type: application/xml; charset=utf-8');
         header('X-Robots-Tag: noindex, follow');
         header('Cache-Control: max-age=3600');
@@ -151,8 +151,8 @@ function almetal_serve_sitemap_early() {
         exit;
     }
 }
-// Exécuter très tôt dans le processus WordPress
-add_action('init', 'almetal_serve_sitemap_early', 1);
+// Exécuter au moment du parsing de la requête (avant 404)
+add_action('parse_request', 'almetal_serve_sitemap_early', 1);
 
 /**
  * Servir le sitemap via template_redirect (fallback)
