@@ -36,13 +36,19 @@ $header_class = $is_home ? 'mobile-header--burger' : 'mobile-header--back';
                 if (has_custom_logo()) {
                     the_custom_logo();
                 } else {
-                    $logo_path = get_template_directory_uri() . '/assets/images/logo.png';
+                    $logo_webp = get_template_directory_uri() . '/assets/images/logo.webp';
+                    $logo_png = get_template_directory_uri() . '/assets/images/logo.png';
                     ?>
-                    <img src="<?php echo esc_url($logo_path); ?>" 
-                         alt="<?php bloginfo('name'); ?> - Logo" 
-                         class="mobile-logo-img"
-                         width="120"
-                         height="40">
+                    <picture>
+                        <source srcset="<?php echo esc_url($logo_webp); ?>" type="image/webp">
+                        <img src="<?php echo esc_url($logo_png); ?>" 
+                             alt="<?php bloginfo('name'); ?> - Métallier Ferronnier Thiers" 
+                             class="mobile-logo-img"
+                             width="120"
+                             height="40"
+                             fetchpriority="high"
+                             decoding="async">
+                    </picture>
                     <?php
                 }
                 ?>

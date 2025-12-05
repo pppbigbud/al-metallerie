@@ -953,6 +953,7 @@ require_once get_template_directory() . '/inc/social-settings-page.php';
 require_once get_template_directory() . '/inc/image-webp-optimizer.php';
 require_once get_template_directory() . '/inc/sitemap-generator.php';
 require_once get_template_directory() . '/inc/seo-local.php';
+require_once get_template_directory() . '/inc/performance-optimizer.php';
 
 /**
  * ============================================================================
