@@ -312,21 +312,96 @@ add_action('add_meta_boxes', 'almetal_add_realisation_meta_boxes');
 function almetal_realisation_details_callback($post) {
     wp_nonce_field('almetal_realisation_details_nonce', 'almetal_realisation_details_nonce');
     
-    $client = get_post_meta($post->ID, '_almetal_client', true);
+    // Récupération des valeurs existantes
+    $client_type = get_post_meta($post->ID, '_almetal_client_type', true);
+    $client_nom = get_post_meta($post->ID, '_almetal_client_nom', true);
+    $client_url = get_post_meta($post->ID, '_almetal_client_url', true);
     $date_realisation = get_post_meta($post->ID, '_almetal_date_realisation', true);
     $lieu = get_post_meta($post->ID, '_almetal_lieu', true);
     $duree = get_post_meta($post->ID, '_almetal_duree', true);
+    $matiere = get_post_meta($post->ID, '_almetal_matiere', true);
+    $peinture = get_post_meta($post->ID, '_almetal_peinture', true);
+    $pose = get_post_meta($post->ID, '_almetal_pose', true);
     $facebook_id = get_post_meta($post->ID, '_almetal_facebook_id', true);
+    
+    // Migration de l'ancien champ client si nécessaire
+    $old_client = get_post_meta($post->ID, '_almetal_client', true);
+    if ($old_client && !$client_type) {
+        $client_type = 'particulier';
+    }
     ?>
     
+    <style>
+        .almetal-metabox-section { margin-bottom: 20px; padding: 15px; background: #f9f9f9; border-radius: 5px; }
+        .almetal-metabox-section h4 { margin: 0 0 15px 0; padding-bottom: 10px; border-bottom: 1px solid #ddd; }
+        .almetal-pro-fields { display: none; margin-top: 15px; padding: 15px; background: #fff; border: 1px solid #ddd; border-radius: 5px; }
+        .almetal-pro-fields.visible { display: block; }
+        .almetal-checkbox-row { display: flex; align-items: center; gap: 10px; }
+        .almetal-checkbox-row input[type="checkbox"] { width: 18px; height: 18px; }
+    </style>
+    
     <table class="form-table">
+        <!-- Section Client -->
         <tr>
-            <th><label for="almetal_client"><?php _e('Client', 'almetal'); ?></label></th>
+            <th><label for="almetal_client_type"><?php _e('Type de client', 'almetal'); ?></label></th>
             <td>
-                <input type="text" id="almetal_client" name="almetal_client" value="<?php echo esc_attr($client); ?>" class="regular-text">
-                <p class="description"><?php _e('Nom du client (optionnel)', 'almetal'); ?></p>
+                <select id="almetal_client_type" name="almetal_client_type" style="min-width: 200px;">
+                    <option value=""><?php _e('-- Sélectionner --', 'almetal'); ?></option>
+                    <option value="particulier" <?php selected($client_type, 'particulier'); ?>><?php _e('Particulier', 'almetal'); ?></option>
+                    <option value="professionnel" <?php selected($client_type, 'professionnel'); ?>><?php _e('Professionnel', 'almetal'); ?></option>
+                </select>
+                
+                <div id="almetal_pro_fields" class="almetal-pro-fields <?php echo ($client_type === 'professionnel') ? 'visible' : ''; ?>">
+                    <p>
+                        <label for="almetal_client_nom"><strong><?php _e('Nom de l\'entreprise', 'almetal'); ?></strong></label><br>
+                        <input type="text" id="almetal_client_nom" name="almetal_client_nom" value="<?php echo esc_attr($client_nom); ?>" class="regular-text" placeholder="<?php _e('Ex: Société Dupont', 'almetal'); ?>">
+                    </p>
+                    <p>
+                        <label for="almetal_client_url"><strong><?php _e('Site web du client', 'almetal'); ?></strong></label><br>
+                        <input type="url" id="almetal_client_url" name="almetal_client_url" value="<?php echo esc_attr($client_url); ?>" class="regular-text" placeholder="https://www.exemple.com">
+                    </p>
+                </div>
             </td>
         </tr>
+        
+        <!-- Matière utilisée -->
+        <tr>
+            <th><label for="almetal_matiere"><?php _e('Matière utilisée', 'almetal'); ?></label></th>
+            <td>
+                <select id="almetal_matiere" name="almetal_matiere" style="min-width: 200px;">
+                    <option value=""><?php _e('-- Sélectionner --', 'almetal'); ?></option>
+                    <option value="acier" <?php selected($matiere, 'acier'); ?>><?php _e('Acier', 'almetal'); ?></option>
+                    <option value="inox" <?php selected($matiere, 'inox'); ?>><?php _e('Inox', 'almetal'); ?></option>
+                    <option value="aluminium" <?php selected($matiere, 'aluminium'); ?>><?php _e('Aluminium', 'almetal'); ?></option>
+                    <option value="cuivre" <?php selected($matiere, 'cuivre'); ?>><?php _e('Cuivre', 'almetal'); ?></option>
+                    <option value="laiton" <?php selected($matiere, 'laiton'); ?>><?php _e('Laiton', 'almetal'); ?></option>
+                    <option value="fer-forge" <?php selected($matiere, 'fer-forge'); ?>><?php _e('Fer forgé', 'almetal'); ?></option>
+                    <option value="mixte" <?php selected($matiere, 'mixte'); ?>><?php _e('Mixte (plusieurs matières)', 'almetal'); ?></option>
+                </select>
+                <p class="description"><?php _e('Matière principale utilisée pour cette réalisation', 'almetal'); ?></p>
+            </td>
+        </tr>
+        
+        <!-- Finition peinture -->
+        <tr>
+            <th><label for="almetal_peinture"><?php _e('Finition peinture', 'almetal'); ?></label></th>
+            <td>
+                <input type="text" id="almetal_peinture" name="almetal_peinture" value="<?php echo esc_attr($peinture); ?>" class="regular-text" placeholder="<?php _e('Ex: RAL 7016, Noir mat, Thermolaquage blanc...', 'almetal'); ?>">
+                <p class="description"><?php _e('Indiquer la finition peinture si applicable (laisser vide si pas de peinture)', 'almetal'); ?></p>
+            </td>
+        </tr>
+        
+        <!-- Pose effectuée -->
+        <tr>
+            <th><label><?php _e('Pose effectuée', 'almetal'); ?></label></th>
+            <td>
+                <div class="almetal-checkbox-row">
+                    <input type="checkbox" id="almetal_pose" name="almetal_pose" value="1" <?php checked($pose, '1'); ?>>
+                    <label for="almetal_pose"><?php _e('Oui, la pose a été réalisée par AL Métallerie', 'almetal'); ?></label>
+                </div>
+            </td>
+        </tr>
+        
         <tr>
             <th><label for="almetal_date_realisation"><?php _e('Date de réalisation', 'almetal'); ?></label></th>
             <td>
@@ -356,6 +431,19 @@ function almetal_realisation_details_callback($post) {
         </tr>
     </table>
     
+    <script>
+    jQuery(document).ready(function($) {
+        // Afficher/masquer les champs professionnels
+        $('#almetal_client_type').on('change', function() {
+            if ($(this).val() === 'professionnel') {
+                $('#almetal_pro_fields').addClass('visible');
+            } else {
+                $('#almetal_pro_fields').removeClass('visible');
+            }
+        });
+    });
+    </script>
+    
     <?php
 }
 
@@ -377,14 +465,32 @@ function almetal_save_realisation_meta($post_id) {
         return;
     }
 
-    // Sauvegarder les champs
-    $fields = array('almetal_client', 'almetal_date_realisation', 'almetal_lieu', 'almetal_duree', 'almetal_facebook_id');
+    // Sauvegarder les champs texte
+    $text_fields = array(
+        'almetal_client_type',
+        'almetal_client_nom',
+        'almetal_date_realisation', 
+        'almetal_lieu', 
+        'almetal_duree',
+        'almetal_matiere',
+        'almetal_peinture',
+        'almetal_facebook_id'
+    );
     
-    foreach ($fields as $field) {
+    foreach ($text_fields as $field) {
         if (isset($_POST[$field])) {
             update_post_meta($post_id, '_' . $field, sanitize_text_field($_POST[$field]));
         }
     }
+    
+    // Sauvegarder l'URL du client (avec validation URL)
+    if (isset($_POST['almetal_client_url'])) {
+        update_post_meta($post_id, '_almetal_client_url', esc_url_raw($_POST['almetal_client_url']));
+    }
+    
+    // Sauvegarder la checkbox pose
+    $pose_value = isset($_POST['almetal_pose']) ? '1' : '0';
+    update_post_meta($post_id, '_almetal_pose', $pose_value);
 }
 add_action('save_post_realisation', 'almetal_save_realisation_meta');
 

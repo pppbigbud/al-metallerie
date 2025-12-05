@@ -144,18 +144,44 @@ class ALMetal_Social_Auto_Publish {
      */
     private function render_detected_info($post_id) {
         // Récupérer les métadonnées
-        $client = get_post_meta($post_id, '_almetal_client', true);
+        $client_type = get_post_meta($post_id, '_almetal_client_type', true);
+        $client_nom = get_post_meta($post_id, '_almetal_client_nom', true);
+        $client_url = get_post_meta($post_id, '_almetal_client_url', true);
         $lieu = get_post_meta($post_id, '_almetal_lieu', true);
         $date_realisation = get_post_meta($post_id, '_almetal_date_realisation', true);
         $duree = get_post_meta($post_id, '_almetal_duree', true);
+        $matiere = get_post_meta($post_id, '_almetal_matiere', true);
+        $peinture = get_post_meta($post_id, '_almetal_peinture', true);
+        $pose = get_post_meta($post_id, '_almetal_pose', true);
         $types = wp_get_post_terms($post_id, 'type_realisation');
+        
+        // Labels pour la matière
+        $matiere_labels = array(
+            'acier' => 'Acier',
+            'inox' => 'Inox',
+            'aluminium' => 'Aluminium',
+            'cuivre' => 'Cuivre',
+            'laiton' => 'Laiton',
+            'fer-forge' => 'Fer forgé',
+            'mixte' => 'Mixte'
+        );
         
         $has_info = false;
         
         echo '<ul style="margin: 10px 0 0 0;">';
         
-        if ($client) {
-            echo '<li>👤 Client : ' . esc_html($client) . '</li>';
+        // Type de client
+        if ($client_type) {
+            $client_label = ($client_type === 'professionnel') ? 'Professionnel' : 'Particulier';
+            if ($client_type === 'professionnel' && $client_nom) {
+                $client_display = esc_html($client_label) . ' - ' . esc_html($client_nom);
+                if ($client_url) {
+                    $client_display .= ' (<a href="' . esc_url($client_url) . '" target="_blank">🔗 site web</a>)';
+                }
+                echo '<li>👤 Client : ' . $client_display . '</li>';
+            } else {
+                echo '<li>👤 Client : ' . esc_html($client_label) . '</li>';
+            }
             $has_info = true;
         }
         
@@ -176,6 +202,25 @@ class ALMetal_Social_Auto_Publish {
         
         if ($types && !is_wp_error($types) && !empty($types)) {
             echo '<li>🏷️ Type : ' . implode(', ', wp_list_pluck($types, 'name')) . '</li>';
+            $has_info = true;
+        }
+        
+        // Matière
+        if ($matiere) {
+            $matiere_label = isset($matiere_labels[$matiere]) ? $matiere_labels[$matiere] : $matiere;
+            echo '<li>⚙️ Matière : ' . esc_html($matiere_label) . '</li>';
+            $has_info = true;
+        }
+        
+        // Peinture
+        if ($peinture) {
+            echo '<li>🎨 Finition : ' . esc_html($peinture) . '</li>';
+            $has_info = true;
+        }
+        
+        // Pose - accepter '1' ou 1 ou true
+        if ($pose == '1' || $pose === 1 || $pose === true) {
+            echo '<li>✅ Pose réalisée par AL Métallerie</li>';
             $has_info = true;
         }
         
@@ -430,10 +475,15 @@ class ALMetal_Social_Auto_Publish {
         
         // Récupérer les informations de la réalisation
         $post = get_post($post_id);
-        $client = get_post_meta($post_id, '_almetal_client', true);
+        $client_type = get_post_meta($post_id, '_almetal_client_type', true);
+        $client_nom = get_post_meta($post_id, '_almetal_client_nom', true);
+        $client_url = get_post_meta($post_id, '_almetal_client_url', true);
         $lieu = get_post_meta($post_id, '_almetal_lieu', true);
         $date_realisation = get_post_meta($post_id, '_almetal_date_realisation', true);
         $duree = get_post_meta($post_id, '_almetal_duree', true);
+        $matiere = get_post_meta($post_id, '_almetal_matiere', true);
+        $peinture = get_post_meta($post_id, '_almetal_peinture', true);
+        $pose = get_post_meta($post_id, '_almetal_pose', true);
         $types = wp_get_post_terms($post_id, 'type_realisation');
         
         // Générer les textes
@@ -442,10 +492,15 @@ class ALMetal_Social_Auto_Publish {
         
         $texts = $generator->generate_texts(array(
             'title' => $post->post_title,
-            'client' => $client,
+            'client_type' => $client_type,
+            'client_nom' => $client_nom,
+            'client_url' => $client_url,
             'lieu' => $lieu,
             'date' => $date_realisation,
             'duree' => $duree,
+            'matiere' => $matiere,
+            'peinture' => $peinture,
+            'pose' => $pose,
             'types' => $types
         ));
         
@@ -474,24 +529,52 @@ class ALMetal_Social_Auto_Publish {
         
         $post_id = intval($_POST['post_id']);
         
-        // Sauvegarder d'abord les champs s'ils sont envoyés
+        // Sauvegarder les champs s'ils sont envoyés ET non vides (depuis la metabox principale)
+        // Ne pas écraser les valeurs existantes avec des valeurs vides
         if (isset($_POST['fields'])) {
             $fields = $_POST['fields'];
             
-            if (isset($fields['client'])) {
+            // Anciens champs (compatibilité)
+            if (isset($fields['client']) && !empty($fields['client'])) {
                 update_post_meta($post_id, '_almetal_client', sanitize_text_field($fields['client']));
             }
             
-            if (isset($fields['lieu'])) {
+            if (isset($fields['lieu']) && !empty($fields['lieu'])) {
                 update_post_meta($post_id, '_almetal_lieu', sanitize_text_field($fields['lieu']));
             }
             
-            if (isset($fields['date'])) {
+            if (isset($fields['date']) && !empty($fields['date'])) {
                 update_post_meta($post_id, '_almetal_date_realisation', sanitize_text_field($fields['date']));
             }
             
-            if (isset($fields['duree'])) {
+            if (isset($fields['duree']) && !empty($fields['duree'])) {
                 update_post_meta($post_id, '_almetal_duree', sanitize_text_field($fields['duree']));
+            }
+            
+            // Nouveaux champs - sauvegarder seulement si non vide
+            if (isset($fields['client_type']) && !empty($fields['client_type'])) {
+                update_post_meta($post_id, '_almetal_client_type', sanitize_text_field($fields['client_type']));
+            }
+            
+            if (isset($fields['client_nom']) && !empty($fields['client_nom'])) {
+                update_post_meta($post_id, '_almetal_client_nom', sanitize_text_field($fields['client_nom']));
+            }
+            
+            if (isset($fields['client_url']) && !empty($fields['client_url'])) {
+                update_post_meta($post_id, '_almetal_client_url', esc_url_raw($fields['client_url']));
+            }
+            
+            if (isset($fields['matiere']) && !empty($fields['matiere'])) {
+                update_post_meta($post_id, '_almetal_matiere', sanitize_text_field($fields['matiere']));
+            }
+            
+            if (isset($fields['peinture']) && !empty($fields['peinture'])) {
+                update_post_meta($post_id, '_almetal_peinture', sanitize_text_field($fields['peinture']));
+            }
+            
+            // Checkbox pose - sauvegarder seulement si explicitement '1'
+            if (isset($fields['pose']) && $fields['pose'] === '1') {
+                update_post_meta($post_id, '_almetal_pose', '1');
             }
         }
         
@@ -687,7 +770,7 @@ class ALMetal_Social_Auto_Publish {
             'almetal-social-publish',
             get_template_directory_uri() . '/assets/js/admin-social-publish.js',
             array('jquery'),
-            '1.0.0',
+            '1.2.0-' . time(), // Force le rechargement du cache
             true
         );
         

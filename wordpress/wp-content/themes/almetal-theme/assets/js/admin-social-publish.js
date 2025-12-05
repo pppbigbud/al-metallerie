@@ -183,12 +183,38 @@
             // Désactiver le bouton
             $button.prop('disabled', true).text('🔄 Chargement...');
             
-            // Récupérer les valeurs des champs (sans underscore au début)
+            // Debug: vérifier que les éléments existent
+            console.log('🔍 Debug - Éléments trouvés:');
+            console.log('  - #almetal_client_type:', $('#almetal_client_type').length, 'val:', $('#almetal_client_type').val());
+            console.log('  - #almetal_client_nom:', $('#almetal_client_nom').length, 'val:', $('#almetal_client_nom').val());
+            console.log('  - #almetal_matiere:', $('#almetal_matiere').length, 'val:', $('#almetal_matiere').val());
+            console.log('  - #almetal_peinture:', $('#almetal_peinture').length, 'val:', $('#almetal_peinture').val());
+            console.log('  - #almetal_pose:', $('#almetal_pose').length, 'checked:', $('#almetal_pose').is(':checked'));
+            
+            // Récupérer les valeurs des champs directement depuis le formulaire (sans sauvegarde préalable)
+            // Utiliser document.getElementById pour être sûr de trouver les éléments
+            var clientTypeEl = document.getElementById('almetal_client_type');
+            var clientNomEl = document.getElementById('almetal_client_nom');
+            var clientUrlEl = document.getElementById('almetal_client_url');
+            var matiereEl = document.getElementById('almetal_matiere');
+            var peintureEl = document.getElementById('almetal_peinture');
+            var poseEl = document.getElementById('almetal_pose');
+            var lieuEl = document.getElementById('almetal_lieu');
+            var dateEl = document.getElementById('almetal_date_realisation');
+            var dureeEl = document.getElementById('almetal_duree');
+            
             var fields = {
-                client: $('input[name="almetal_client"]').val() || '',
-                lieu: $('input[name="almetal_lieu"]').val() || '',
-                date: $('input[name="almetal_date_realisation"]').val() || '',
-                duree: $('input[name="almetal_duree"]').val() || ''
+                // Anciens champs
+                lieu: lieuEl ? lieuEl.value : '',
+                date: dateEl ? dateEl.value : '',
+                duree: dureeEl ? dureeEl.value : '',
+                // Nouveaux champs
+                client_type: clientTypeEl ? clientTypeEl.value : '',
+                client_nom: clientNomEl ? clientNomEl.value : '',
+                client_url: clientUrlEl ? clientUrlEl.value : '',
+                matiere: matiereEl ? matiereEl.value : '',
+                peinture: peintureEl ? peintureEl.value : '',
+                pose: poseEl && poseEl.checked ? '1' : '0'
             };
             
             console.log('🔍 Champs détectés:', fields);
