@@ -86,7 +86,7 @@ foreach ($realisations as $realisation) :
 <?php if ($image_url) : ?>
         <image:image>
             <image:loc><?php echo esc_url($image_url); ?></image:loc>
-            <image:title><?php echo esc_html(get_the_title($realisation)); ?></image:title>
+            <image:title><![CDATA[<?php echo strip_tags(html_entity_decode(get_the_title($realisation), ENT_QUOTES, 'UTF-8')); ?>]]></image:title>
         </image:image>
 <?php endif; ?>
     </url>
