@@ -130,15 +130,38 @@ function almetal_sitemap_url($loc, $lastmod, $changefreq, $priority, $image_url 
 }
 
 /**
- * Servir le sitemap dynamique
+ * Servir le sitemap dynamique - Méthode directe (sans rewrite rules)
+ */
+function almetal_serve_sitemap_early() {
+    // Vérifier si c'est une requête pour le sitemap
+    $request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+    
+    // Détecter sitemap.xml dans l'URL
+    if (preg_match('/sitemap\.xml/i', $request_uri)) {
+        // S'assurer que WordPress est chargé
+        if (!defined('ABSPATH')) {
+            return;
+        }
+        
+        header('Content-Type: application/xml; charset=utf-8');
+        header('X-Robots-Tag: noindex, follow');
+        header('Cache-Control: max-age=3600');
+        
+        echo almetal_generate_sitemap();
+        exit;
+    }
+}
+// Exécuter très tôt dans le processus WordPress
+add_action('init', 'almetal_serve_sitemap_early', 1);
+
+/**
+ * Servir le sitemap via template_redirect (fallback)
  */
 function almetal_serve_sitemap() {
     global $wp;
     
     // Vérifier si c'est une requête pour le sitemap
-    if (isset($wp->query_vars['sitemap']) || 
-        (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'sitemap.xml') !== false)) {
-        
+    if (isset($wp->query_vars['sitemap'])) {
         header('Content-Type: application/xml; charset=utf-8');
         header('X-Robots-Tag: noindex, follow');
         
@@ -154,7 +177,7 @@ add_action('template_redirect', 'almetal_serve_sitemap', 1);
 function almetal_sitemap_rewrite_rules() {
     add_rewrite_rule('^sitemap\.xml$', 'index.php?sitemap=1', 'top');
 }
-add_action('init', 'almetal_sitemap_rewrite_rules');
+add_action('init', 'almetal_sitemap_rewrite_rules', 10);
 
 /**
  * Ajouter la variable de requête
