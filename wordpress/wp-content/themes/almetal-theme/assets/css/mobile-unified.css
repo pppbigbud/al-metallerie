@@ -2237,6 +2237,27 @@ background: #262626;
     margin: 0;
 }
 
+.mobile-single-info-card--highlight {
+    background: rgba(240, 139, 24, 0.15);
+    border-color: rgba(240, 139, 24, 0.3);
+}
+
+.mobile-single-info-card--highlight .mobile-single-info-content p {
+    color: #F08B18;
+}
+
+.mobile-info-link {
+    color: #F08B18;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.mobile-info-link:hover,
+.mobile-info-link:active {
+    color: #ffb347;
+    text-decoration: underline;
+}
+
 /* Description */
 .mobile-single-description {
     margin-bottom: 2.5rem;

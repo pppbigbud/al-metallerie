@@ -195,6 +195,35 @@
     color: white;
 }
 
+.info-bar-item .info-value--link {
+    color: var(--color-primary);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: color 0.3s ease;
+}
+
+.info-bar-item .info-value--link:hover {
+    color: #ffb347;
+    text-decoration: underline;
+}
+
+.info-bar-item .info-value--link svg {
+    color: inherit;
+    opacity: 0.7;
+}
+
+.info-bar-item--highlight {
+    background: rgba(240, 139, 24, 0.15);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: 1px solid rgba(240, 139, 24, 0.3);
+}
+
+.info-bar-item--highlight .info-value {
+    color: var(--color-primary);
+}
+
 /* ============================================
    CONTENU PRINCIPAL
    ============================================ */

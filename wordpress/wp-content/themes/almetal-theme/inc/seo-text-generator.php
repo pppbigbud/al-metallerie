@@ -443,6 +443,199 @@ Informations :
     }
     
     /**
+     * Générer la description SEO longue structurée pour la page
+     */
+    public function generate_seo_description($data) {
+        // Essayer d'abord avec l'IA
+        if (!empty($this->huggingface_api_key)) {
+            $ai_result = $this->generate_seo_description_with_ai($data);
+            if ($ai_result) {
+                return $ai_result;
+            }
+        }
+        
+        // Fallback : template structuré
+        return $this->generate_seo_description_template($data);
+    }
+    
+    /**
+     * Générer la description SEO avec l'IA
+     */
+    private function generate_seo_description_with_ai($data) {
+        $title = $data['title'] ?? 'Réalisation métallerie';
+        $type_primary = $data['type_primary'] ?? 'métallerie';
+        $type_list = $data['type_list'] ?? 'métallerie';
+        $lieu = $data['lieu'] ?? 'Clermont-Ferrand';
+        $departement = $data['departement'] ?? 'Puy-de-Dôme';
+        $date = !empty($data['date']) ? date_i18n('F Y', strtotime($data['date'])) : '';
+        $duree = $data['duree'] ?? '';
+        $matiere = $data['matiere'] ?? '';
+        $peinture = $data['peinture'] ?? '';
+        $pose = (!empty($data['pose']) && ($data['pose'] === '1' || $data['pose'] == 1));
+        $client_type = $data['client_type'] ?? '';
+        $client_nom = $data['client_nom'] ?? '';
+        
+        $prompt = "<s>[INST] Tu es un expert en rédaction SEO pour une entreprise de métallerie française. 
+Génère une description de page web structurée et optimisée pour Google.
+
+INFORMATIONS DU PROJET :
+- Titre : {$title}
+- Type de réalisation : {$type_list}
+- Lieu : {$lieu} ({$departement})
+" . ($date ? "- Date : {$date}\n" : "") 
+  . ($duree ? "- Durée : {$duree}\n" : "")
+  . ($matiere ? "- Matière : {$matiere}\n" : "")
+  . ($peinture ? "- Finition : {$peinture}\n" : "")
+  . ($pose ? "- Pose incluse : oui\n" : "")
+  . ($client_type === 'professionnel' && $client_nom ? "- Client professionnel : {$client_nom}\n" : "") . "
+
+STRUCTURE OBLIGATOIRE (utilise ces balises HTML) :
+<h2>Présentation du projet de {$type_primary} à {$lieu}</h2>
+<p>Introduction accrocheuse avec mots-clés SEO...</p>
+
+<h3>Notre expertise en {$type_primary}</h3>
+<p>Paragraphe sur le savoir-faire AL Métallerie...</p>
+
+<h3>Caractéristiques techniques</h3>
+<p>Détails sur les matériaux, finitions, pose...</p>
+
+<h3>À propos de ce projet</h3>
+<p>Conclusion avec localisation et appel à l'action...</p>
+
+RÈGLES :
+- Utilise les mots-clés : {$type_list}, métallerie, {$lieu}, {$departement}, sur-mesure, artisan
+- Écris en français professionnel
+- Environ 300-400 mots
+- Mentionne AL Métallerie naturellement
+- Inclus les informations techniques si disponibles
+
+Génère uniquement le HTML, sans commentaires. [/INST]";
+
+        $response = wp_remote_post($this->api_url, array(
+            'timeout' => 60,
+            'headers' => array(
+                'Authorization' => 'Bearer ' . $this->huggingface_api_key,
+                'Content-Type' => 'application/json',
+            ),
+            'body' => json_encode(array(
+                'inputs' => $prompt,
+                'parameters' => array(
+                    'max_new_tokens' => 1500,
+                    'temperature' => 0.7,
+                    'top_p' => 0.9,
+                    'do_sample' => true,
+                    'return_full_text' => false
+                )
+            ))
+        ));
+        
+        if (is_wp_error($response)) {
+            return false;
+        }
+        
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+        
+        if (isset($body[0]['generated_text'])) {
+            $text = $body[0]['generated_text'];
+            
+            // Nettoyer le texte
+            $text = preg_replace('/\[\/INST\].*$/s', '', $text);
+            $text = trim($text);
+            
+            // Vérifier qu'il contient du HTML valide
+            if (strpos($text, '<h2>') !== false || strpos($text, '<h3>') !== false) {
+                return $text;
+            }
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Template de description SEO (fallback)
+     */
+    private function generate_seo_description_template($data) {
+        $title = $data['title'] ?? 'Réalisation métallerie';
+        $type_primary = $data['type_primary'] ?? 'métallerie';
+        $type_list = $data['type_list'] ?? 'métallerie';
+        $lieu = $data['lieu'] ?? 'Clermont-Ferrand';
+        $departement = $data['departement'] ?? 'Puy-de-Dôme';
+        $date = !empty($data['date']) ? date_i18n('F Y', strtotime($data['date'])) : '';
+        $duree = $data['duree'] ?? '';
+        $matiere = $data['matiere'] ?? '';
+        $peinture = $data['peinture'] ?? '';
+        $pose = (!empty($data['pose']) && ($data['pose'] === '1' || $data['pose'] == 1));
+        $client_type = $data['client_type'] ?? '';
+        $client_nom = $data['client_nom'] ?? '';
+        $client_url = $data['client_url'] ?? '';
+        
+        // Construire la description structurée
+        $html = '';
+        
+        // H2 - Titre principal
+        $html .= "<h2>Présentation du projet de {$type_primary} à {$lieu}</h2>\n\n";
+        
+        // Introduction
+        $intro = "<p>{$type_list} sur-mesure à {$lieu} par AL Métallerie. ";
+        if ($matiere) {
+            $intro .= "Ce projet en <strong>{$matiere}</strong> ";
+        } else {
+            $intro .= "Ce projet ";
+        }
+        $intro .= "illustre notre expertise et notre engagement envers la qualité.</p>\n\n";
+        $html .= $intro;
+        
+        // Section expertise
+        $html .= "<h3>Notre expertise en {$type_primary}</h3>\n";
+        $html .= "<p>AL Métallerie met son savoir-faire au service de vos projets de {$type_primary} dans le {$departement} et ses environs. ";
+        $html .= "Chaque réalisation est conçue sur-mesure pour répondre parfaitement à vos besoins et s'intégrer harmonieusement à votre environnement.</p>\n\n";
+        
+        // Section caractéristiques techniques (si données disponibles)
+        if ($matiere || $peinture || $pose) {
+            $html .= "<h3>Caractéristiques techniques</h3>\n";
+            $html .= "<p>";
+            $specs = array();
+            if ($matiere) {
+                $specs[] = "Ce projet a été réalisé en <strong>{$matiere}</strong>, un matériau choisi pour sa durabilité et son esthétique";
+            }
+            if ($peinture) {
+                $specs[] = "La finition <strong>{$peinture}</strong> apporte une touche finale soignée et une protection optimale";
+            }
+            if ($pose) {
+                $specs[] = "La <strong>pose a été réalisée par nos équipes</strong>, garantissant une installation professionnelle et conforme aux normes";
+            }
+            $html .= implode('. ', $specs) . ".</p>\n\n";
+        }
+        
+        // Section client professionnel (si applicable)
+        if ($client_type === 'professionnel' && $client_nom) {
+            $html .= "<h3>Un projet pour {$client_nom}</h3>\n";
+            $html .= "<p>Ce projet a été réalisé pour <strong>{$client_nom}</strong>";
+            if ($client_url) {
+                $html .= " (<a href=\"{$client_url}\" target=\"_blank\" rel=\"noopener\">{$client_url}</a>)";
+            }
+            $html .= ". Nous sommes fiers de cette collaboration qui témoigne de la confiance que nous accordent les professionnels de la région.</p>\n\n";
+        }
+        
+        // Section à propos du projet
+        $html .= "<h3>À propos de ce projet</h3>\n";
+        $html .= "<p>Ce projet de {$type_primary} a été réalisé à {$lieu} par AL Métallerie, spécialiste de la métallerie dans le {$departement}. ";
+        if ($duree) {
+            $html .= "La durée de réalisation de ce projet a été de <strong>{$duree}</strong>, témoignant de notre efficacité et de notre professionnalisme. ";
+        }
+        if ($date) {
+            $html .= "Projet finalisé en {$date}. ";
+        }
+        $html .= "</p>\n\n";
+        
+        // Appel à l'action
+        $html .= "<p><strong>Vous avez un projet similaire ?</strong> Contactez AL Métallerie pour un devis gratuit et personnalisé. ";
+        $html .= "Notre équipe est à votre écoute pour concrétiser vos idées en {$type_primary} sur-mesure.</p>";
+        
+        return $html;
+    }
+    
+    /**
      * Template Facebook (fallback) - 5 variations
      */
     private function generate_facebook_template($data) {

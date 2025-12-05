@@ -24,6 +24,7 @@ class ALMetal_Social_Auto_Publish {
         add_action('wp_ajax_generate_seo_text', array($this, 'ajax_generate_seo_text'));
         add_action('wp_ajax_test_social_connection', array($this, 'ajax_test_connection'));
         add_action('wp_ajax_refresh_detected_info', array($this, 'ajax_refresh_detected_info'));
+        add_action('wp_ajax_generate_seo_description', array($this, 'ajax_generate_seo_description'));
         add_action('wp_ajax_attach_image_to_post', array($this, 'ajax_attach_image'));
         add_action('wp_ajax_detach_image_from_post', array($this, 'ajax_detach_image'));
         add_action('wp_ajax_set_featured_image', array($this, 'ajax_set_featured_image'));
@@ -236,6 +237,7 @@ class ALMetal_Social_Auto_Publish {
      */
     public function render_seo_generator_box($post) {
         $generated_text = get_post_meta($post->ID, '_almetal_generated_seo_text', true);
+        $seo_description = get_post_meta($post->ID, '_almetal_seo_description', true);
         $facebook_text = get_post_meta($post->ID, '_almetal_facebook_text', true);
         $instagram_text = get_post_meta($post->ID, '_almetal_instagram_text', true);
         $linkedin_text = get_post_meta($post->ID, '_almetal_linkedin_text', true);
@@ -254,15 +256,29 @@ class ALMetal_Social_Auto_Publish {
                     🔄 Rafraîchir les informations
                 </button>
                 <button type="button" class="button button-primary button-large" id="generate-seo-text">
-                    ✨ Générer le texte SEO
-                </button>
-                <button type="button" class="button button-secondary button-large" id="copy-to-description">
-                    📝 Copier dans le contenu
+                    ✨ Générer textes réseaux
                 </button>
                 <span class="spinner" style="float: none; margin: 0 10px;"></span>
             </div>
             
             <div id="seo-generation-status"></div>
+            
+            <hr>
+            
+            <!-- NOUVELLE SECTION : Description SEO longue -->
+            <h3>📄 Description SEO de la page (contenu principal)</h3>
+            <p class="description" style="margin-bottom: 10px;">Ce texte structuré sera affiché sur la page de la réalisation. Il est optimisé pour le référencement Google avec des titres H2/H3.</p>
+            
+            <div style="margin-bottom: 15px;">
+                <button type="button" class="button button-primary button-large" id="generate-seo-description">
+                    🤖 Générer la description SEO
+                </button>
+                <span class="spinner" id="seo-desc-spinner" style="float: none; margin: 0 10px;"></span>
+            </div>
+            <div id="seo-description-status"></div>
+            
+            <textarea name="almetal_seo_description" id="almetal_seo_description" rows="15" style="width: 100%; font-family: monospace;"><?php echo esc_textarea($seo_description); ?></textarea>
+            <p class="description">Vous pouvez modifier ce texte manuellement. Les balises HTML (h2, h3, p, strong) sont autorisées.</p>
             
             <hr>
             
@@ -416,6 +432,21 @@ class ALMetal_Social_Auto_Publish {
         // Sauvegarder les textes générés
         if (isset($_POST['almetal_generated_seo_text'])) {
             update_post_meta($post_id, '_almetal_generated_seo_text', sanitize_textarea_field($_POST['almetal_generated_seo_text']));
+        }
+        
+        // Sauvegarder la description SEO longue (autoriser HTML basique)
+        if (isset($_POST['almetal_seo_description'])) {
+            $allowed_html = array(
+                'h2' => array(),
+                'h3' => array(),
+                'p' => array(),
+                'strong' => array(),
+                'em' => array(),
+                'br' => array(),
+                'ul' => array(),
+                'li' => array(),
+            );
+            update_post_meta($post_id, '_almetal_seo_description', wp_kses($_POST['almetal_seo_description'], $allowed_html));
         }
         
         if (isset($_POST['almetal_facebook_text'])) {
@@ -584,6 +615,111 @@ class ALMetal_Social_Auto_Publish {
         $html = ob_get_clean();
         
         wp_send_json_success(array('html' => $html));
+    }
+    
+    /**
+     * Générer la description SEO longue (AJAX)
+     */
+    public function ajax_generate_seo_description() {
+        check_ajax_referer('almetal_generate_seo_desc', 'nonce');
+        
+        if (!current_user_can('edit_posts')) {
+            wp_send_json_error('Permission refusée');
+        }
+        
+        $post_id = intval($_POST['post_id']);
+        $post = get_post($post_id);
+        
+        if (!$post) {
+            wp_send_json_error('Post introuvable');
+        }
+        
+        // Récupérer toutes les informations
+        $title = $post->post_title;
+        $types = get_the_terms($post_id, 'type_realisation');
+        $type_names = $types ? wp_list_pluck($types, 'name') : array('métallerie');
+        $type_primary = !empty($type_names) ? $type_names[0] : 'métallerie';
+        $type_list = implode(' et ', $type_names);
+        
+        $lieu = get_post_meta($post_id, '_almetal_lieu', true) ?: 'Clermont-Ferrand';
+        $date = get_post_meta($post_id, '_almetal_date_realisation', true);
+        $duree = get_post_meta($post_id, '_almetal_duree', true);
+        $matiere = get_post_meta($post_id, '_almetal_matiere', true);
+        $peinture = get_post_meta($post_id, '_almetal_peinture', true);
+        $pose = get_post_meta($post_id, '_almetal_pose', true);
+        $client_type = get_post_meta($post_id, '_almetal_client_type', true);
+        $client_nom = get_post_meta($post_id, '_almetal_client_nom', true);
+        $client_url = get_post_meta($post_id, '_almetal_client_url', true);
+        
+        // Labels matières
+        $matiere_labels = array(
+            'acier' => 'acier',
+            'inox' => 'inox',
+            'aluminium' => 'aluminium',
+            'cuivre' => 'cuivre',
+            'laiton' => 'laiton',
+            'fer-forge' => 'fer forgé',
+            'mixte' => 'matériaux mixtes'
+        );
+        $matiere_label = isset($matiere_labels[$matiere]) ? $matiere_labels[$matiere] : '';
+        
+        // Déterminer le département depuis le lieu
+        $departement = $this->get_departement_from_lieu($lieu);
+        
+        // Essayer de générer via IA
+        $seo_generator = new ALMetal_SEO_Text_Generator();
+        $description = $seo_generator->generate_seo_description(array(
+            'title' => $title,
+            'types' => $types,
+            'type_primary' => $type_primary,
+            'type_list' => $type_list,
+            'lieu' => $lieu,
+            'departement' => $departement,
+            'date' => $date,
+            'duree' => $duree,
+            'matiere' => $matiere_label,
+            'peinture' => $peinture,
+            'pose' => $pose,
+            'client_type' => $client_type,
+            'client_nom' => $client_nom,
+            'client_url' => $client_url
+        ));
+        
+        if ($description) {
+            // Sauvegarder
+            update_post_meta($post_id, '_almetal_seo_description', $description);
+            wp_send_json_success(array('description' => $description));
+        } else {
+            wp_send_json_error('Erreur lors de la génération');
+        }
+    }
+    
+    /**
+     * Déterminer le département depuis le lieu
+     */
+    private function get_departement_from_lieu($lieu) {
+        $departements = array(
+            'Clermont-Ferrand' => 'Puy-de-Dôme',
+            'Thiers' => 'Puy-de-Dôme',
+            'Riom' => 'Puy-de-Dôme',
+            'Issoire' => 'Puy-de-Dôme',
+            'Ambert' => 'Puy-de-Dôme',
+            'Vichy' => 'Allier',
+            'Montluçon' => 'Allier',
+            'Moulins' => 'Allier',
+            'Aurillac' => 'Cantal',
+            'Le Puy-en-Velay' => 'Haute-Loire',
+            'Lyon' => 'Rhône',
+            'Saint-Étienne' => 'Loire',
+        );
+        
+        foreach ($departements as $ville => $dept) {
+            if (stripos($lieu, $ville) !== false) {
+                return $dept;
+            }
+        }
+        
+        return 'Puy-de-Dôme'; // Par défaut
     }
     
     /**
@@ -770,13 +906,14 @@ class ALMetal_Social_Auto_Publish {
             'almetal-social-publish',
             get_template_directory_uri() . '/assets/js/admin-social-publish.js',
             array('jquery'),
-            '1.2.0-' . time(), // Force le rechargement du cache
+            '1.3.0', // Version avec génération description SEO
             true
         );
         
         wp_localize_script('almetal-social-publish', 'almetalSocial', array(
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce_generate' => wp_create_nonce('almetal_generate_seo'),
+            'nonce_generate_desc' => wp_create_nonce('almetal_generate_seo_desc'),
             'nonce_test' => wp_create_nonce('almetal_test_social'),
             'nonce_refresh' => wp_create_nonce('almetal_refresh_info'),
             'settings_url' => admin_url('options-general.php?page=almetal-social-settings')

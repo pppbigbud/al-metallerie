@@ -38,6 +38,26 @@ $date_realisation = get_post_meta(get_the_ID(), '_almetal_date_realisation', tru
 $lieu = get_post_meta(get_the_ID(), '_almetal_lieu', true);
 $duree = get_post_meta(get_the_ID(), '_almetal_duree', true);
 
+// Nouveaux champs
+$client_type = get_post_meta(get_the_ID(), '_almetal_client_type', true);
+$client_nom = get_post_meta(get_the_ID(), '_almetal_client_nom', true);
+$client_url = get_post_meta(get_the_ID(), '_almetal_client_url', true);
+$matiere = get_post_meta(get_the_ID(), '_almetal_matiere', true);
+$peinture = get_post_meta(get_the_ID(), '_almetal_peinture', true);
+$pose = get_post_meta(get_the_ID(), '_almetal_pose', true);
+
+// Labels des matières
+$matiere_labels = array(
+    'acier' => 'Acier',
+    'inox' => 'Inox',
+    'aluminium' => 'Aluminium',
+    'cuivre' => 'Cuivre',
+    'laiton' => 'Laiton',
+    'fer-forge' => 'Fer forgé',
+    'mixte' => 'Mixte'
+);
+$matiere_label = isset($matiere_labels[$matiere]) ? $matiere_labels[$matiere] : $matiere;
+
 // Icônes SVG par type de réalisation
 $icons = array(
     'portails' => '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18" rx="1"/><rect x="14" y="3" width="7" height="18" rx="1"/></svg>',
@@ -95,7 +115,7 @@ $icons = array(
             ?>
 
             <!-- BARRE D'INFOS HORIZONTALE -->
-            <?php if ($date_realisation || $lieu || $duree || $client) : ?>
+            <?php if ($date_realisation || $lieu || $duree || $client || $matiere || $peinture || $pose || $client_nom) : ?>
                 <div class="realisation-info-bar">
                     <div class="container">
                         <div class="info-bar-items">
@@ -134,7 +154,63 @@ $icons = array(
                                 </div>
                             <?php endif; ?>
                             
-                            <?php if ($client) : ?>
+                            <?php if ($matiere_label) : ?>
+                                <div class="info-bar-item">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14 2 14 8 20 8"/>
+                                        <line x1="16" y1="13" x2="8" y2="13"/>
+                                        <line x1="16" y1="17" x2="8" y2="17"/>
+                                    </svg>
+                                    <span class="info-label"><?php _e('Matière', 'almetal'); ?></span>
+                                    <span class="info-value"><?php echo esc_html($matiere_label); ?></span>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <?php if ($peinture) : ?>
+                                <div class="info-bar-item">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/>
+                                        <path d="M12 8v8"/>
+                                        <path d="M8 12h8"/>
+                                    </svg>
+                                    <span class="info-label"><?php _e('Finition', 'almetal'); ?></span>
+                                    <span class="info-value"><?php echo esc_html($peinture); ?></span>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <?php if ($pose === '1') : ?>
+                                <div class="info-bar-item info-bar-item--highlight">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                        <polyline points="22 4 12 14.01 9 11.01"/>
+                                    </svg>
+                                    <span class="info-label"><?php _e('Pose', 'almetal'); ?></span>
+                                    <span class="info-value"><?php _e('Incluse', 'almetal'); ?></span>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <?php if ($client_type === 'professionnel' && $client_nom) : ?>
+                                <div class="info-bar-item">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                        <polyline points="9 22 9 12 15 12 15 22"/>
+                                    </svg>
+                                    <span class="info-label"><?php _e('Client', 'almetal'); ?></span>
+                                    <?php if ($client_url) : ?>
+                                        <a href="<?php echo esc_url($client_url); ?>" target="_blank" rel="noopener noreferrer" class="info-value info-value--link">
+                                            <?php echo esc_html($client_nom); ?>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: 4px;">
+                                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                                                <polyline points="15 3 21 3 21 9"/>
+                                                <line x1="10" y1="14" x2="21" y2="3"/>
+                                            </svg>
+                                        </a>
+                                    <?php else : ?>
+                                        <span class="info-value"><?php echo esc_html($client_nom); ?></span>
+                                    <?php endif; ?>
+                                </div>
+                            <?php elseif ($client) : ?>
                                 <div class="info-bar-item">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
@@ -153,7 +229,32 @@ $icons = array(
             <div class="realisation-main-section">
                 <div class="container">
                     <div class="realisation-content-v2">
-                        <?php the_content(); ?>
+                        <?php 
+                        // Afficher la description SEO générée si elle existe
+                        $seo_description = get_post_meta(get_the_ID(), '_almetal_seo_description', true);
+                        if (!empty($seo_description)) {
+                            // Autoriser les balises HTML SEO
+                            $allowed_html = array(
+                                'h2' => array(),
+                                'h3' => array(),
+                                'p' => array(),
+                                'strong' => array(),
+                                'em' => array(),
+                                'br' => array(),
+                                'ul' => array(),
+                                'li' => array(),
+                                'a' => array(
+                                    'href' => array(),
+                                    'target' => array(),
+                                    'rel' => array(),
+                                ),
+                            );
+                            echo wp_kses($seo_description, $allowed_html);
+                        } else {
+                            // Fallback : afficher le contenu WordPress classique
+                            the_content();
+                        }
+                        ?>
                     </div>
 
                         <?php

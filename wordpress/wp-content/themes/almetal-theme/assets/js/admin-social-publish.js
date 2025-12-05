@@ -260,7 +260,7 @@
         });
         
         /**
-         * Générer le texte SEO
+         * Générer le texte SEO (réseaux sociaux)
          */
         $('#generate-seo-text').on('click', function(e) {
             e.preventDefault();
@@ -308,6 +308,73 @@
                 },
                 complete: function() {
                     $button.prop('disabled', false);
+                    $spinner.removeClass('is-active');
+                }
+            });
+        });
+        
+        /**
+         * Générer la description SEO longue (contenu de la page)
+         */
+        $('#generate-seo-description').on('click', function(e) {
+            e.preventDefault();
+            
+            var $button = $(this);
+            var $spinner = $('#seo-desc-spinner');
+            var $status = $('#seo-description-status');
+            var $textarea = $('#almetal_seo_description');
+            var postId = $('#post_ID').val();
+            
+            // Confirmation si le champ n'est pas vide
+            if ($textarea.val().trim() !== '') {
+                if (!confirm('⚠️ Une description existe déjà. Voulez-vous la remplacer ?')) {
+                    return;
+                }
+            }
+            
+            // Désactiver le bouton
+            $button.prop('disabled', true).text('🤖 Génération en cours...');
+            $spinner.addClass('is-active');
+            $status.html('<div class="seo-info">⏳ Génération de la description SEO en cours... Cela peut prendre quelques secondes.</div>');
+            
+            // Appel AJAX
+            $.ajax({
+                url: almetalSocial.ajax_url,
+                type: 'POST',
+                timeout: 90000, // 90 secondes pour l'IA
+                data: {
+                    action: 'generate_seo_description',
+                    nonce: almetalSocial.nonce_generate_desc,
+                    post_id: postId
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Remplir le textarea avec la description générée
+                        $textarea.val(response.data.description);
+                        
+                        // Afficher le message de succès
+                        $status.html('<div class="seo-success">✅ Description SEO générée avec succès ! Vous pouvez la modifier avant de publier.</div>');
+                        
+                        // Animation de succès sur le textarea
+                        $textarea.css('background', '#d4edda');
+                        setTimeout(function() {
+                            $textarea.css('background', '');
+                        }, 2000);
+                        
+                        // Scroll vers le textarea
+                        $('html, body').animate({
+                            scrollTop: $textarea.offset().top - 100
+                        }, 500);
+                    } else {
+                        $status.html('<div class="seo-error">❌ Erreur : ' + response.data + '</div>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Erreur AJAX:', {xhr: xhr, status: status, error: error});
+                    $status.html('<div class="seo-error">❌ Erreur de connexion ou timeout. Veuillez réessayer.</div>');
+                },
+                complete: function() {
+                    $button.prop('disabled', false).text('🤖 Générer la description SEO');
                     $spinner.removeClass('is-active');
                 }
             });

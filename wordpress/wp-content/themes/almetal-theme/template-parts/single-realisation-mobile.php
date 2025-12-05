@@ -43,6 +43,26 @@ $client = get_post_meta($post_id, '_almetal_client', true);
 $date_realisation = get_post_meta($post_id, '_almetal_date_realisation', true);
 $lieu = get_post_meta($post_id, '_almetal_lieu', true);
 $duree = get_post_meta($post_id, '_almetal_duree', true);
+
+// Nouveaux champs
+$client_type = get_post_meta($post_id, '_almetal_client_type', true);
+$client_nom = get_post_meta($post_id, '_almetal_client_nom', true);
+$client_url = get_post_meta($post_id, '_almetal_client_url', true);
+$matiere = get_post_meta($post_id, '_almetal_matiere', true);
+$peinture = get_post_meta($post_id, '_almetal_peinture', true);
+$pose = get_post_meta($post_id, '_almetal_pose', true);
+
+// Labels des matières
+$matiere_labels = array(
+    'acier' => 'Acier',
+    'inox' => 'Inox',
+    'aluminium' => 'Aluminium',
+    'cuivre' => 'Cuivre',
+    'laiton' => 'Laiton',
+    'fer-forge' => 'Fer forgé',
+    'mixte' => 'Mixte'
+);
+$matiere_label = isset($matiere_labels[$matiere]) ? $matiere_labels[$matiere] : $matiere;
 ?>
 
 <article class="mobile-single-realisation">
@@ -138,7 +158,72 @@ $duree = get_post_meta($post_id, '_almetal_duree', true);
                 </div>
             <?php endif; ?>
 
-            <?php if ($client) : ?>
+            <?php if ($matiere_label) : ?>
+                <div class="mobile-single-info-card">
+                    <div class="mobile-single-info-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                        </svg>
+                    </div>
+                    <div class="mobile-single-info-content">
+                        <h3><?php esc_html_e('Matière', 'almetal'); ?></h3>
+                        <p><?php echo esc_html($matiere_label); ?></p>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($peinture) : ?>
+                <div class="mobile-single-info-card">
+                    <div class="mobile-single-info-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"></path>
+                            <path d="M12 8v8"></path>
+                            <path d="M8 12h8"></path>
+                        </svg>
+                    </div>
+                    <div class="mobile-single-info-content">
+                        <h3><?php esc_html_e('Finition', 'almetal'); ?></h3>
+                        <p><?php echo esc_html($peinture); ?></p>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($pose === '1') : ?>
+                <div class="mobile-single-info-card mobile-single-info-card--highlight">
+                    <div class="mobile-single-info-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                    </div>
+                    <div class="mobile-single-info-content">
+                        <h3><?php esc_html_e('Pose', 'almetal'); ?></h3>
+                        <p><?php esc_html_e('Incluse', 'almetal'); ?></p>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($client_type === 'professionnel' && $client_nom) : ?>
+                <div class="mobile-single-info-card">
+                    <div class="mobile-single-info-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                    </div>
+                    <div class="mobile-single-info-content">
+                        <h3><?php esc_html_e('Client', 'almetal'); ?></h3>
+                        <?php if ($client_url) : ?>
+                            <p><a href="<?php echo esc_url($client_url); ?>" target="_blank" rel="noopener noreferrer" class="mobile-info-link"><?php echo esc_html($client_nom); ?></a></p>
+                        <?php else : ?>
+                            <p><?php echo esc_html($client_nom); ?></p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php elseif ($client) : ?>
                 <div class="mobile-single-info-card">
                     <div class="mobile-single-info-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -155,13 +240,38 @@ $duree = get_post_meta($post_id, '_almetal_duree', true);
         </div>
 
         <!-- Description du projet -->
-        <?php if (get_the_content()) : ?>
+        <?php 
+        $seo_description = get_post_meta($post_id, '_almetal_seo_description', true);
+        if (!empty($seo_description) || get_the_content()) : 
+        ?>
             <div class="mobile-single-description">
                 <h2 class="mobile-single-section-title">
                     <?php esc_html_e('Description du projet', 'almetal'); ?>
                 </h2>
                 <div class="mobile-single-content">
-                    <?php the_content(); ?>
+                    <?php 
+                    if (!empty($seo_description)) {
+                        // Autoriser les balises HTML SEO
+                        $allowed_html = array(
+                            'h2' => array(),
+                            'h3' => array(),
+                            'p' => array(),
+                            'strong' => array(),
+                            'em' => array(),
+                            'br' => array(),
+                            'ul' => array(),
+                            'li' => array(),
+                            'a' => array(
+                                'href' => array(),
+                                'target' => array(),
+                                'rel' => array(),
+                            ),
+                        );
+                        echo wp_kses($seo_description, $allowed_html);
+                    } else {
+                        the_content();
+                    }
+                    ?>
                 </div>
             </div>
         <?php endif; ?>
