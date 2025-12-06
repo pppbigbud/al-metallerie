@@ -1,157 +1,141 @@
-# 🏗️ Site WordPress AL Metallerie
+# Thème AL Metallerie
 
-Site WordPress personnalisé pour AL Metallerie avec thème responsive (one-page mobile, multi-pages desktop).
+Thème WordPress personnalisé pour AL Metallerie avec design responsive adaptatif.
 
-## 📋 Prérequis
+## 🎯 Caractéristiques
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop) installé et en cours d'exécution
-- [Git](https://git-scm.com/) (optionnel, pour le versioning)
+- **Mobile** : Layout one-page avec navigation par ancres
+- **Desktop** : Layout multi-pages classique
+- **Responsive** : Adaptation automatique selon le device
+- **Performance** : Code optimisé et léger
+- **SEO-friendly** : Structure sémantique HTML5
 
-## 🚀 Installation et démarrage
-
-### 1. Cloner ou télécharger le projet
-
-```bash
-cd "c:\Users\BIGBUD\Desktop\PROJETS\AL Metallerie\ALMETAL"
-```
-
-### 2. Lancer l'environnement Docker
-
-```bash
-docker-compose up -d
-```
-
-Cette commande va :
-- Télécharger les images Docker nécessaires (première fois uniquement)
-- Créer et démarrer les containers (WordPress, MySQL, phpMyAdmin)
-- Configurer automatiquement la base de données
-
-### 3. Accéder au site
-
-- **WordPress** : http://localhost:8000
-- **phpMyAdmin** : http://localhost:8080
-  - Serveur : `db`
-  - Utilisateur : `almetal_user`
-  - Mot de passe : `almetal_password_2025`
-
-### 4. Installation initiale de WordPress
-
-Lors de la première visite sur http://localhost:8000, suivez l'assistant d'installation WordPress :
-1. Choisissez la langue
-2. Créez votre compte administrateur
-3. Donnez un titre à votre site
-
-## 🛠️ Commandes utiles
-
-### Démarrer les containers
-```bash
-docker-compose up -d
-```
-
-### Arrêter les containers
-```bash
-docker-compose down
-```
-
-### Voir les logs
-```bash
-docker-compose logs -f
-```
-
-### Redémarrer les containers
-```bash
-docker-compose restart
-```
-
-### Arrêter et supprimer tout (y compris les données)
-```bash
-docker-compose down -v
-```
-⚠️ **Attention** : Cette commande supprime la base de données !
-
-## 📁 Structure du projet
+## 📁 Structure du thème
 
 ```
-ALMETAL/
-├── docker-compose.yml          # Configuration Docker
-├── .env                        # Variables d'environnement
-├── .gitignore                  # Fichiers à ignorer par Git
-├── README.md                   # Ce fichier
-├── CHECKLIST_PROJET_WORDPRESS.md  # Checklist du projet
-└── wordpress/                  # Fichiers WordPress (créé automatiquement)
-    └── wp-content/
-        └── themes/
-            └── almetal-theme/  # Votre thème personnalisé
+almetal-theme/
+├── style.css              # Styles principaux + métadonnées du thème
+├── functions.php          # Fonctionnalités WordPress
+├── index.php              # Template par défaut
+├── front-page.php         # Page d'accueil
+├── page.php               # Pages standards
+├── single.php             # Articles individuels
+├── header.php             # En-tête du site
+├── footer.php             # Pied de page
+├── screenshot.png         # Capture d'écran du thème
+├── README.md              # Ce fichier
+├── assets/
+│   ├── css/
+│   │   └── custom.css     # Styles personnalisés
+│   ├── js/
+│   │   └── main.js        # Scripts JavaScript
+│   └── images/            # Images du thème
+└── template-parts/
+    └── mobile-onepage.php # Template one-page mobile
 ```
 
-## 🎨 Développement du thème
+## 🚀 Installation
 
-Le thème personnalisé se trouve dans :
-```
-wordpress/wp-content/themes/almetal-theme/
-```
+1. Télécharger ou cloner le thème dans `wp-content/themes/`
+2. Activer le thème depuis l'administration WordPress
+3. Configurer les menus dans **Apparence > Menus**
+4. Personnaliser dans **Apparence > Personnaliser**
 
-Après avoir créé le thème, activez-le depuis l'administration WordPress :
-**Apparence > Thèmes > Almetal Theme**
+## 🎨 Personnalisation
 
-## 🔧 Configuration
+### Couleurs
 
-### Modifier les ports
+Les couleurs sont définies en variables CSS dans `style.css` :
 
-Si les ports 8000 ou 8080 sont déjà utilisés, modifiez le fichier `.env` :
-
-```env
-WP_PORT=8001      # Nouveau port pour WordPress
-PMA_PORT=8081     # Nouveau port pour phpMyAdmin
-```
-
-Puis redémarrez les containers :
-```bash
-docker-compose down
-docker-compose up -d
+```css
+:root {
+    --color-primary: #2c3e50;
+    --color-secondary: #3498db;
+    --color-accent: #e74c3c;
+    /* ... */
+}
 ```
 
-### Mode debug
+### Menus
 
-Pour activer/désactiver le mode debug WordPress, modifiez dans `.env` :
-```env
-WP_DEBUG=true   # ou false
-```
+Le thème supporte 2 emplacements de menu :
+- **Menu Principal** : Navigation principale
+- **Menu Footer** : Pied de page
 
-## 📦 Export pour production (O2switch)
+### Widgets
 
-### 1. Exporter la base de données
+Zones de widgets disponibles :
+- **Sidebar Principale** : Sidebar (desktop uniquement)
+- **Footer Widget 1, 2, 3** : Trois zones dans le footer
 
-Via phpMyAdmin (http://localhost:8080) :
-1. Sélectionnez la base `almetal_db`
-2. Onglet "Exporter"
-3. Méthode : Rapide
-4. Format : SQL
-5. Téléchargez le fichier
+## 📱 One-Page Mobile
 
-### 2. Préparer les fichiers
+Pour la navigation one-page sur mobile :
 
-Les fichiers WordPress se trouvent dans le dossier `wordpress/`
+1. Créer vos pages dans WordPress
+2. Ajouter un **ID de section** dans la métabox (panneau latéral)
+3. Utiliser cet ID dans les liens du menu : `#services`, `#contact`, etc.
 
-### 3. Adapter pour O2switch
+## 🔧 Fonctionnalités
 
-Avant le déploiement :
-- Modifier les URLs dans la base de données (search & replace)
-- Mettre à jour `wp-config.php` avec les identifiants O2switch
-- Désactiver le mode debug (`WP_DEBUG=false`)
+### Détection Mobile/Desktop
+
+Le thème détecte automatiquement le type d'appareil et applique le bon layout.
+
+### Navigation Smooth Scroll
+
+Navigation fluide entre les sections (one-page mobile).
+
+### Lazy Loading
+
+Chargement différé des images pour de meilleures performances.
+
+### SEO
+
+- Balises sémantiques HTML5
+- Support du titre automatique
+- Meta tags optimisés
+
+## 🎯 Intégration Figma
+
+Pour intégrer votre maquette Figma :
+
+1. **Exporter les assets** :
+   - Images → `assets/images/`
+   - Icônes SVG → `assets/images/icons/`
+
+2. **Couleurs** :
+   - Copier la palette de couleurs
+   - Mettre à jour les variables CSS dans `style.css`
+
+3. **Typographie** :
+   - Ajouter les Google Fonts dans `functions.php`
+   - Mettre à jour `--font-primary` et `--font-heading`
+
+4. **Layout** :
+   - Adapter les sections dans `template-parts/mobile-onepage.php`
+   - Personnaliser `custom.css` selon le design
+
+## 📝 TODO
+
+- [ ] Ajouter un formulaire de contact
+- [ ] Créer des Custom Post Types si nécessaire
+- [ ] Intégrer la maquette Figma complète
+- [ ] Optimiser les images
+- [ ] Ajouter des animations
+- [ ] Tester sur différents navigateurs
 
 ## 🔒 Sécurité
 
-⚠️ **Important** :
-- Les mots de passe dans `.env` sont pour le développement local uniquement
-- **Ne commitez JAMAIS le fichier `.env` sur Git**
-- Changez tous les mots de passe pour la production
-- Utilisez des mots de passe forts pour O2switch
+- Échappement de toutes les sorties
+- Vérification des nonces
+- Validation des entrées utilisateur
+- Protection contre l'accès direct aux fichiers
 
-## 📞 Support
-
-Pour toute question sur le projet, consultez la `CHECKLIST_PROJET_WORDPRESS.md`
-
-## 📝 Licence
+## 📄 Licence
 
 Projet privé - AL Metallerie © 2025
+
+## 👨‍💻 Développeur
+
+BIGBUD - Développeur Web & Web Mobile
