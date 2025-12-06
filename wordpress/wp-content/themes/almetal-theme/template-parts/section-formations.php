@@ -32,7 +32,8 @@ $subtitle = !empty($section['subtitle']) ? $section['subtitle'] : '';
 $bg_image = !empty($section['background_image']) ? $section['background_image'] : '';
 $bg_overlay = isset($section['background_overlay']) ? floatval($section['background_overlay']) : 0.6;
 
-// Fonction pour obtenir l'icône SVG
+// Fonction pour obtenir l'icône SVG (éviter redéclaration)
+if (!function_exists('hp_get_formation_icon')) {
 function hp_get_formation_icon($icon_key) {
     $icons = array(
         'users' => '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>',
@@ -46,8 +47,10 @@ function hp_get_formation_icon($icon_key) {
     );
     return isset($icons[$icon_key]) ? $icons[$icon_key] : $icons['users'];
 }
+}
 
-// Fonction pour parser les points clés
+// Fonction pour parser les points clés (éviter redéclaration)
+if (!function_exists('hp_parse_features')) {
 function hp_parse_features($features_text) {
     if (empty($features_text)) return array();
     $lines = explode("\n", $features_text);
@@ -59,6 +62,7 @@ function hp_parse_features($features_text) {
         }
     }
     return array_slice($features, 0, 5); // Max 5 features
+}
 }
 ?>
 
